@@ -1,0 +1,16 @@
+{
+  "name": "apitentacion",
+  "version": "1.0.0",
+  "description": "Una API REST en cual se encargue de la comunicación de una Repostería.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
