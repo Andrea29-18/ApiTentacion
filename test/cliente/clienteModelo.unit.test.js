@@ -1,70 +1,83 @@
-const mongoose = require("mongoose");
-const Cliente = require("../../models/clienteModelo");
-const {
-	cifrarContrasena,
-	compararContrasena,
-} = require("../../utils/autenticacion");
-const { cifrarTexto, descifrarTexto } = require("../../utils/cifrado");
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const Cliente = require('../../models/clienteModelo'); 
 
-describe("Modelo Cliente sin conexión a DB", () => {
-	it("debe crear un cliente correctamente", async () => {
-		const cliente = new Cliente({
-			nombre: "Juan",
-			apellidos: "Pérez",
-			telefono: cifrarTexto("2281234567"),
-			fechaNacimiento: new Date("1990-01-01"),
-			correo: cifrarTexto("juan.perez@example.com"),
-			contrasena: await cifrarContrasena("miContrasena123"),
-		});
+let mongoServer;
 
-		expect(cliente.nombre).toBe("Juan");
-		expect(cliente.telefono).toBe(cifrarTexto("2281234567"));
-		expect(cliente.correo).toBe(cifrarTexto("juan.perez@example.com"));
-	});
-
-	it("debe comparar contraseñas correctamente", async () => {
-		const cliente = new Cliente({
-			nombre: "Ana",
-			apellidos: "García",
-			telefono: cifrarTexto("2287654321"),
-			fechaNacimiento: new Date("1992-05-15"),
-			correo: cifrarTexto("ana.garcia@example.com"),
-			contrasena: await cifrarContrasena("miContrasena456"),
-		});
-
-		const esCoincidente = await compararContrasena(
-			"miContrasena456",
-			cliente.contrasena
-		);
-		expect(esCoincidente).toBe(true);
-	});
+beforeAll(async () => {
+    // Solo conectamos si no hay una conexión activa
+    if (mongoose.connection.readyState === 0) {
+        mongoServer = await MongoMemoryServer.create();
+        const uri = mongoServer.getUri();
+        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    }
 });
 
-describe("Modelo Cliente con conexión a DB", () => {
-	beforeAll(async () => {
-		await mongoose.connect("mongodb://localhost:27017/test", {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		});
-	});
+afterAll(async () => {
+    // Desconectar y detener MongoMemoryServer al final de todas las pruebas
+    await mongoose.disconnect();
+    if (mongoServer) {
+        await mongoServer.stop();
+    }
+});
 
-	afterAll(async () => {
-		await mongoose.connection.close();
-	});
+afterEach(async () => {
+    await Cliente.deleteMany({});
+});
 
-	it("debe crear un cliente correctamente en la base de datos", async () => {
-		const cliente = new Cliente({
-			nombre: "Laura",
-			apellidos: "Sánchez",
-			telefono: cifrarTexto("2283334444"),
-			fechaNacimiento: new Date("1995-08-20"),
-			correo: cifrarTexto("laura.sanchez@example.com"),
-			contrasena: await cifrarContrasena("miContrasena789"),
-		});
+describe('Cliente Model Test', () => {
+    it('Debería validar el número de teléfono', async () => {
+        const clienteInvalido = new Cliente({
+            nombre: 'Juan',
+            apellidos: 'Pérez',
+            telefono: '123456789', 
+            fechaNacimiento: new Date('1990-01-01'),
+            correo: 'juan@ejemplo.com',
+            contrasena: 'Password1!'
+        });
 
-		const resultado = await cliente.save();
-		expect(resultado).toHaveProperty("_id");
-		expect(resultado.nombre).toBe("Laura");
-		expect(resultado.telefono).toBe(cifrarTexto("2283334444"));
-	});
+        await expect(clienteInvalido.save()).rejects.toThrow
+                ('El número de teléfono no es válido. Debe tener 10 dígitos y contener solo números.');
+    });
+
+    it('Debería validar el correo', async () => {
+        const clienteInvalido = new Cliente({
+            nombre: 'Juan',
+            apellidos: 'Pérez',
+            telefono: '1234567890',
+            fechaNacimiento: new Date('1990-01-01'),
+            correo: 'correoInvalido',
+            contrasena: 'Password1!'
+        });
+
+        await expect(clienteInvalido.save()).rejects.toThrow('El correo no es válido.');
+    });
+
+    it('Debería validar la contraseña', async () => {
+        const clienteInvalido = new Cliente({
+            nombre: 'Juan',
+            apellidos: 'Pérez',
+            telefono: '1234567890',
+            fechaNacimiento: new Date('1990-01-01'),
+            correo: 'juan@ejemplo.com',
+            contrasena: 'abc'
+        });
+
+        await expect(clienteInvalido.save()).rejects.toThrow('La contraseña no es válida.');
+    });
+
+    it('Debería cifrar y descifrar la contraseña correctamente', async () => {
+        const clienteValido = new Cliente({
+            nombre: 'Juan',
+            apellidos: 'Pérez',
+            telefono: '1234567890',
+            fechaNacimiento: new Date('1990-01-01'),
+            correo: 'juan@ejemplo.com',
+            contrasena: 'Password1!'
+        });
+
+        await clienteValido.save();
+        const clienteGuardado = await Cliente.findOne({ correo: 'juan@ejemplo.com' });
+        expect(clienteGuardado.contrasena).toBe('Password1!');
+    });
 });

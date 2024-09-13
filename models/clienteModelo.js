@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { cifrarTexto, descifrarTexto } = require('../utils/cifrado');
-const { cifrarContrasena, compararContrasena } = require('../utils/autenticacion');
+const { validarCliente } = require('../middlewares/clienteMiddleware');
 
 const clienteEsquema = new mongoose.Schema({
     nombre: {
@@ -14,8 +14,8 @@ const clienteEsquema = new mongoose.Schema({
     telefono: {
         type: String,
         required: true,
-        set: cifrarTexto,
-        get: descifrarTexto,
+        set: cifrarTexto, // Cifra el número de teléfono al guardarlo
+        get: descifrarTexto, // Lo descifra al obtenerlo
     },
     fechaNacimiento: {
         type: Date,
@@ -25,25 +25,19 @@ const clienteEsquema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        set: cifrarTexto,
-        get: descifrarTexto,
+        set: cifrarTexto, // Cifra el correo al guardarlo
+        get: descifrarTexto, // Lo descifra al obtenerlo
     },
     contrasena: {
         type: String,
         required: true,
+        set: cifrarTexto, // Cifra la contraseña al guardarla
+        get: descifrarTexto, // La descifra al obtenerla
     },
 });
 
-clienteEsquema.pre('save', async function(next) {
-    if (this.isModified('contrasena')) {
-        this.contrasena = await cifrarContrasena(this.contrasena);
-    }
-    next();
-});
-
-clienteEsquema.methods.compararContrasena = function(contrasena) {
-    return compararContrasena(contrasena, this.contrasena);
-};
+// Middleware para validar antes de guardar
+clienteEsquema.pre('save', validarCliente);
 
 const Cliente = mongoose.model('Cliente', clienteEsquema);
 module.exports = Cliente;

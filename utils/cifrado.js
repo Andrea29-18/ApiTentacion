@@ -21,4 +21,10 @@ const descifrarTexto = (texto) => {
     return descifrado.toString();
 };
 
-module.exports = { cifrarTexto, descifrarTexto };
+// Nueva función para comparar contraseñas
+const compararContrasena = (contrasenaIngresada, contrasenaAlmacenada) => {
+    const contrasenaDescifrada = descifrarTexto(contrasenaAlmacenada);
+    return contrasenaIngresada === contrasenaDescifrada;
+};
+
+module.exports = { cifrarTexto, descifrarTexto, compararContrasena };
