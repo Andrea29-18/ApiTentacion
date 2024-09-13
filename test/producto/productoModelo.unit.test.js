@@ -1,8 +1,20 @@
-const mongoose = require('mongoose');
+const { connectDB, disconnectDB } = require('../setup');
 const Producto = require('../../models/productoModelo');
 
-describe('Modelo Producto sin conexión a DB', () => {
-    it('debe crear un producto correctamente', () => {
+beforeAll(async () => {
+    await connectDB();
+});
+
+afterAll(async () => {
+    await disconnectDB();
+});
+
+describe('Modelo Producto', () => {
+    afterEach(async () => {
+        await Producto.deleteMany({});
+    });
+
+    it('debe crear un producto correctamente sin conexión a DB', () => {
         const producto = new Producto({
             nombre: 'Pastel de Chocolate',
             precio: 150,
@@ -12,19 +24,6 @@ describe('Modelo Producto sin conexión a DB', () => {
 
         expect(producto.nombre).toBe('Pastel de Chocolate');
         expect(producto.precio).toBe(150);
-    });
-});
-
-describe('Modelo Producto con conexión a DB', () => {
-    beforeAll(async () => {
-        await mongoose.connect('mongodb://localhost:27017/test', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-    });
-
-    afterAll(async () => {
-        await mongoose.connection.close();
     });
 
     it('debe crear un producto correctamente en la base de datos', async () => {

@@ -1,57 +1,54 @@
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const Producto = require('../../models/productoModelo');
-
-let mongoServer;
+const { connectDB, disconnectDB } = require('../setup');
+const Administrador = require('../../models/administradorModelo');
 
 beforeAll(async () => {
-    // Solo conectamos si no hay una conexión activa
-    if (mongoose.connection.readyState === 0) {
-        mongoServer = await MongoMemoryServer.create();
-        const uri = mongoServer.getUri();
-        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    }
+    await connectDB();
 });
 
 afterAll(async () => {
-    // Desconectar y detener MongoMemoryServer al final de todas las pruebas
-    await mongoose.disconnect();
-    if (mongoServer) {
-        await mongoServer.stop();
-    }
+    await disconnectDB();
 });
 
-afterEach(async () => {
-    // Limpiar la base de datos entre pruebas
-    await Producto.deleteMany({});
-});
-
-describe('Modelo Producto sin conexión a DB', () => {
-    it('debe crear un producto correctamente', () => {
-        const producto = new Producto({
-            nombre: 'Pastel de Chocolate',
-            precio: 150,
-            fechaCreacion: new Date(),
-            fechaVencimiento: new Date('2024-12-31'),
-        });
-
-        expect(producto.nombre).toBe('Pastel de Chocolate');
-        expect(producto.precio).toBe(150);
+describe('Administrador Model Test', () => {
+    afterEach(async () => {
+        await Administrador.deleteMany({});
     });
-});
 
-describe('Modelo Producto con conexión a DB', () => {
-    it('debe crear un producto correctamente en la base de datos', async () => {
-        const producto = new Producto({
-            nombre: 'Pastel de Fresa',
-            precio: 200,
-            fechaCreacion: new Date(),
-            fechaVencimiento: new Date('2024-11-30'),
+    it('Debería validar el número de teléfono', async () => {
+        const administradorInvalido = new Administrador({
+            nombre: 'Maria',
+            apellidos: 'García',
+            usuario: 'mgarcia',
+            telefono: '12345', // Teléfono inválido
+            contrasena: 'Password1!',
         });
 
-        const resultado = await producto.save();
-        expect(resultado).toHaveProperty('_id');
-        expect(resultado.nombre).toBe('Pastel de Fresa');
-        expect(resultado.precio).toBe(200);
+        await expect(administradorInvalido.save()).rejects.toThrow('El número de teléfono no es válido. Debe tener 10 dígitos.');
+    });
+
+    it('Debería validar la contraseña', async () => {
+        const administradorInvalido = new Administrador({
+            nombre: 'Maria',
+            apellidos: 'García',
+            usuario: 'mgarcia',
+            telefono: '1234567890',
+            contrasena: 'abc', // Contraseña inválida
+        });
+
+        await expect(administradorInvalido.save()).rejects.toThrow('La contraseña no es válida.');
+    });
+
+    it('Debería cifrar y descifrar el número de teléfono correctamente', async () => {
+        const administradorValido = new Administrador({
+            nombre: 'Maria',
+            apellidos: 'García',
+            usuario: 'mgarcia',
+            telefono: '1234567890',
+            contrasena: 'Password1!',
+        });
+
+        await administradorValido.save();
+        const administradorGuardado = await Administrador.findOne({ usuario: 'mgarcia' });
+        expect(administradorGuardado.telefono).toBe('1234567890'); // Debería descifrar correctamente
     });
 });

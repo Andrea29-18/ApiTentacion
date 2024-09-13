@@ -1,43 +1,30 @@
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const Cliente = require('../../models/clienteModelo'); 
-
-let mongoServer;
+const { connectDB, disconnectDB } = require('../setup');
+const Cliente = require('../../models/clienteModelo');
 
 beforeAll(async () => {
-    // Solo conectamos si no hay una conexión activa
-    if (mongoose.connection.readyState === 0) {
-        mongoServer = await MongoMemoryServer.create();
-        const uri = mongoServer.getUri();
-        await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    }
+    await connectDB();
 });
 
 afterAll(async () => {
-    // Desconectar y detener MongoMemoryServer al final de todas las pruebas
-    await mongoose.disconnect();
-    if (mongoServer) {
-        await mongoServer.stop();
-    }
-});
-
-afterEach(async () => {
-    await Cliente.deleteMany({});
+    await disconnectDB();
 });
 
 describe('Cliente Model Test', () => {
+    afterEach(async () => {
+        await Cliente.deleteMany({});
+    });
+
     it('Debería validar el número de teléfono', async () => {
         const clienteInvalido = new Cliente({
             nombre: 'Juan',
             apellidos: 'Pérez',
-            telefono: '123456789', 
+            telefono: '123456789', // Teléfono inválido
             fechaNacimiento: new Date('1990-01-01'),
             correo: 'juan@ejemplo.com',
-            contrasena: 'Password1!'
+            contrasena: 'Password1!',
         });
 
-        await expect(clienteInvalido.save()).rejects.toThrow
-                ('El número de teléfono no es válido. Debe tener 10 dígitos y contener solo números.');
+        await expect(clienteInvalido.save()).rejects.toThrow('El número de teléfono no es válido. Debe tener 10 dígitos y contener solo números.');
     });
 
     it('Debería validar el correo', async () => {
@@ -47,7 +34,7 @@ describe('Cliente Model Test', () => {
             telefono: '1234567890',
             fechaNacimiento: new Date('1990-01-01'),
             correo: 'correoInvalido',
-            contrasena: 'Password1!'
+            contrasena: 'Password1!',
         });
 
         await expect(clienteInvalido.save()).rejects.toThrow('El correo no es válido.');
@@ -60,7 +47,7 @@ describe('Cliente Model Test', () => {
             telefono: '1234567890',
             fechaNacimiento: new Date('1990-01-01'),
             correo: 'juan@ejemplo.com',
-            contrasena: 'abc'
+            contrasena: 'abc',
         });
 
         await expect(clienteInvalido.save()).rejects.toThrow('La contraseña no es válida.');
@@ -73,11 +60,11 @@ describe('Cliente Model Test', () => {
             telefono: '1234567890',
             fechaNacimiento: new Date('1990-01-01'),
             correo: 'juan@ejemplo.com',
-            contrasena: 'Password1!'
+            contrasena: 'Password1!',
         });
 
         await clienteValido.save();
         const clienteGuardado = await Cliente.findOne({ correo: 'juan@ejemplo.com' });
-        expect(clienteGuardado.contrasena).toBe('Password1!');
+        expect(clienteGuardado.contrasena).toBe('Password1!'); // Debería descifrar correctamente
     });
 });
