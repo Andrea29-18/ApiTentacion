@@ -6,9 +6,9 @@ require('dotenv').config();
 const app = express();
 const puerto = 3003;
 
-conectarBaseDatos();
-
-insertarDatosIniciales();
+//Datos de conexión a la base de datos
+//conectarBaseDatos();
+//insertarDatosIniciales();
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
