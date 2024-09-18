@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "apitentacion": "file:",
     "express": "^4.19.2"
   }
 }
