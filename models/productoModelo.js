@@ -1,22 +1,35 @@
 const mongoose = require('mongoose');
+const Insumo = require('./insumoModelo');
+const CategoriaProducto = require('./categoriaProductoModelo');
 
 const productoEsquema = new mongoose.Schema({
-    nombre: {
+    nombreProducto: {
         type: String,
-        required: true,
+        required: true
     },
-    precio: {
+    cantidadStock: {
         type: Number,
-        required: true,
+        required: true
     },
-    fechaCreacion: {
-        type: Date,
-        default: Date.now,
+    precioFinal: {
+        type: Number,
+        required: true
     },
     fechaVencimiento: {
         type: Date,
-        required: true,
+        required: true
     },
+    insumos: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Insumo' // Referencia al modelo Insumo
+        }
+    ],
+    catalogoProducto: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CategoriaProducto', // Referencia al modelo CategoriaProducto
+        required: true
+    }
 });
 
 const Producto = mongoose.model('Producto', productoEsquema);
