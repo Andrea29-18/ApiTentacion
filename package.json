@@ -12,10 +12,11 @@
 	"license": "MIT",
 	"dependencies": {
 		"apitentacion": "file:",
+		"apollo-server": "^3.13.0",
 		"bcrypt": "^5.1.1",
 		"dotenv": "^16.4.5",
 		"express": "^4.19.2",
-		"glob": "^11.0.0",
+		"graphql": "^16.9.0",
 		"mongoose": "^8.6.3",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.1"

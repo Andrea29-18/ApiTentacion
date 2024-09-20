@@ -1,27 +1,37 @@
-const express = require('express');
-const conectarBaseDatos = require('./config/database/conexion');
-const insertarDatosIniciales = require('./config/database/integracion');
-const errorMiddleware = require('./middlewares/errorMiddleware');
-const swaggerDocs = require('./docs/swagger');
 require('dotenv').config();
+const express = require('express');
+const { ApolloServer } = require('apollo-server-express');
+const mongoose = require('mongoose');
+const insumoEsquema = require('./graphql/schemas/insumoEsquema');
+const insumoResolvers = require('./graphql/resolvers/insumoResolver');
+const swaggerDocs = require('./docs/swagger');
+const errorMiddleware = require('./middlewares/errorMiddleware');
 
 const app = express();
-const puerto = process.env.PORT || 3003; // Usa el puerto del .env o 3003 por defecto
+const puerto = process.env.PORT || 8080;
 
-conectarBaseDatos()
-    .catch(err => {
-        console.error('No se pudo conectar a la base de datos. El servidor no se iniciará.');
-        process.exit(1);
-    });
-
-insertarDatosIniciales();
-
-app.use(express.urlencoded({ extended: false }));
+// Middleware para parsear JSON
 app.use(express.json());
+
+// Conexión a la base de datos
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('Conexión a la BD exitosa'))
+    .catch(err => console.error('Error de conexión a la BD', err));
 
 // Configuración de Swagger
 swaggerDocs(app);
 
+// Configuración de Apollo Server
+const servidorApollo = new ApolloServer({
+    typeDefs: insumoEsquema,
+    resolvers: insumoResolvers,
+});
+
+// Middleware de Apollo Server
+servidorApollo.start().then(() => {
+    servidorApollo.applyMiddleware({ app });
+    
+    // Rutas de la API REST
 // Importar rutas
 const insumoRutas = require('./routes/insumoRutas');
 
@@ -29,9 +39,12 @@ const insumoRutas = require('./routes/insumoRutas');
 app.use('/insumos', insumoRutas);
 
 // Middleware de error
-app.use(errorMiddleware);
+app.use(errorMiddleware);;
 
+// Inicia el servidor
 app.listen(puerto, () => {
     console.log(`Servidor corriendo en el puerto ${puerto}`);
-    console.log(`Documentación de la API disponible en: http://localhost:${puerto}/api-docs`); // Ruta de la documentación
+    console.log(`Documentación de la API disponible en: http://localhost:${puerto}/api-docs`);
+    console.log(`Servidor GraphQL disponible en: http://localhost:${puerto}${servidorApollo.graphqlPath}`);
+});
 });
