@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Producto = require('./productoModelo');
 
 const pedidoEsquema = new mongoose.Schema({
-    productos: [ // Nota que cambié el nombre a productos en minúscula para seguir la convención de nombres en singular/plural
+    productos: [ 
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Producto' // Referencia al modelo Producto
