@@ -34,9 +34,11 @@ servidorApollo.start().then(() => {
     // Rutas de la API REST
 // Importar rutas
 const insumoRutas = require('./routes/insumoRutas');
+const ubicacionRutas = require('./routes/ubicacionRutas');
 
 // Usar las rutas
 app.use('/insumos', insumoRutas);
+app.use('/ubicaciones', ubicacionRutas);
 
 // Middleware de error
 app.use(errorMiddleware);;
