@@ -12,13 +12,66 @@ const router = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Insumo:
+ *       type: object
+ *       required:
+ *         - nombre
+ *         - cantidadNeta
+ *         - precioNeto
+ *       properties:
+ *         nombre:
+ *           type: string
+ *           description: Nombre del insumo
+ *         cantidadNeta:
+ *           type: number
+ *           description: Cantidad neta del insumo
+ *         precioNeto:
+ *           type: number
+ *           description: Precio neto del insumo
+ *       example:
+ *         nombre: "Harina"
+ *         cantidadNeta: 50
+ *         precioNeto: 20.5
+ */
+
+/**
+ * @swagger
  * /insumos:
  *   post:
  *     tags: [Insumos]
- *     description: Crear un nuevo insumo
+ *     summary: Crear un nuevo insumo
+ *     description: Crea un insumo nuevo en la base de datos.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Insumo'
  *     responses:
  *       201:
- *         description: Insumo creado
+ *         description: Insumo creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 insumo:
+ *                   $ref: '#/components/schemas/Insumo'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  */
 router.post('/', insumoControlador.crearInsumo);
 
@@ -27,10 +80,28 @@ router.post('/', insumoControlador.crearInsumo);
  * /insumos:
  *   get:
  *     tags: [Insumos]
- *     description: Obtener todos los insumos
+ *     summary: Obtener todos los insumos
+ *     description: Recupera una lista de todos los insumos disponibles.
  *     responses:
  *       200:
- *         description: Lista de insumos
+ *         description: Lista de insumos obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Insumo'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  */
 router.get('/', insumoControlador.obtenerInsumos);
 
@@ -39,15 +110,42 @@ router.get('/', insumoControlador.obtenerInsumos);
  * /insumos/{id}:
  *   get:
  *     tags: [Insumos]
- *     description: Obtener un insumo por ID
+ *     summary: Obtener un insumo por ID
+ *     description: Recupera un insumo específico mediante su ID.
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
  *         required: true
- *         description: ID del insumo
+ *         description: ID único del insumo
  *     responses:
  *       200:
  *         description: Insumo encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Insumo'
+ *       404:
+ *         description: Insumo no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  */
 router.get('/:id', insumoControlador.obtenerInsumoPorId);
 
@@ -56,15 +154,56 @@ router.get('/:id', insumoControlador.obtenerInsumoPorId);
  * /insumos/{id}:
  *   put:
  *     tags: [Insumos]
- *     description: Actualizar un insumo por ID
+ *     summary: Actualizar un insumo por ID
+ *     description: Actualiza los detalles de un insumo existente mediante su ID.
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
  *         required: true
- *         description: ID del insumo
+ *         description: ID único del insumo a actualizar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Insumo'
+ *           example:
+ *             nombre: "Harina refinada"
+ *             cantidadNeta: 100
+ *             precioNeto: 25.0
  *     responses:
  *       200:
- *         description: Insumo actualizado
+ *         description: Insumo actualizado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 insumo:
+ *                   $ref: '#/components/schemas/Insumo'
+ *       404:
+ *         description: Insumo no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  */
 router.put('/:id', insumoControlador.actualizarInsumo);
 
@@ -73,15 +212,37 @@ router.put('/:id', insumoControlador.actualizarInsumo);
  * /insumos/{id}:
  *   delete:
  *     tags: [Insumos]
- *     description: Eliminar un insumo por ID
+ *     summary: Eliminar un insumo por ID
+ *     description: Elimina un insumo existente mediante su ID.
  *     parameters:
- *       - name: id
- *         in: path
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
  *         required: true
- *         description: ID del insumo
+ *         description: ID único del insumo a eliminar
  *     responses:
  *       204:
- *         description: Insumo eliminado
+ *         description: Insumo eliminado exitosamente
+ *       404:
+ *         description: Insumo no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  */
 router.delete('/:id', insumoControlador.eliminarInsumo);
 
