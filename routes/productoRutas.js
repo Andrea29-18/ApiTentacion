@@ -1,56 +1,75 @@
 const express = require('express');
-const insumoControlador = require('../controller/insumoControlador');
+const productoControlador = require('../controller/productoControlador');
 const router = express.Router();
 
 /**
  * @swagger
  * tags:
- *   name: Insumos
- *   description: Operaciones relacionadas con insumos
+ *   name: Productos
+ *   description: Operaciones relacionadas con productos
  */
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     Insumo:
+ *     Producto:
  *       type: object
  *       required:
- *         - nombre
- *         - cantidadNeta
- *         - precioNeto
+ *         - nombreProducto
+ *         - cantidadStock
+ *         - precioFinal
+ *         - fechaVencimiento
+ *         - insumos
+ *         - catalogoProducto
  *       properties:
- *         nombre:
+ *         nombreProducto:
  *           type: string
- *           description: Nombre del insumo
- *         cantidadNeta:
+ *           description: Nombre del producto
+ *         cantidadStock:
  *           type: number
- *           description: Cantidad neta del insumo
- *         precioNeto:
+ *           description: Cantidad de stock del producto
+ *         precioFinal:
  *           type: number
- *           description: Precio neto del insumo
+ *           description: Precio final del producto
+ *         fechaVencimiento:
+ *           type: string
+ *           format: date
+ *           description: Fecha de vencimiento del producto
+ *         insumos:
+ *           type: array
+ *           items:
+ *             type: string
+ *             description: ID de los insumos del producto
+ *           description: Lista de insumos utilizados en el producto
+ *         catalogoProducto:
+ *           type: string
+ *           description: ID de la categoría de producto
  *       example:
- *         nombre: "Harina"
- *         cantidadNeta: 50
- *         precioNeto: 20.5
+ *         nombreProducto: "Pan"
+ *         cantidadStock: 100
+ *         precioFinal: 10
+ *         fechaVencimiento: "2022-12-31"
+ *         insumos: ["613f6f7b5b3a3b5e7f9b3a6a"]
+ *         catalogoProducto: "613f6f7b5b3a3b5e7f9b3a6b"
  */
 
 /**
  * @swagger
- * /insumos:
+ * /productos:
  *   post:
- *     tags: [Insumos]
- *     summary: Crear un nuevo insumo
- *     description: Crea un insumo nuevo en la base de datos.
+ *     tags: [Productos]
+ *     summary: Crear un nuevo producto
+ *     description: Crea un producto nuevo en la base de datos.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Insumo'
+ *             $ref: '#/components/schemas/Producto'
  *     responses:
  *       201:
- *         description: Insumo creado exitosamente
+ *         description: Producto creado exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -58,8 +77,8 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *                 insumo:
- *                   $ref: '#/components/schemas/Insumo'
+ *                 producto:
+ *                   $ref: '#/components/schemas/Producto'
  *       500:
  *         description: Error interno del servidor
  *         content:
@@ -72,24 +91,24 @@ const router = express.Router();
  *                 error:
  *                   type: string
  */
-router.post('/', insumoControlador.crearInsumo);
+router.post('/', productoControlador.crearProducto);
 
 /**
  * @swagger
- * /insumos:
+ * /productos:
  *   get:
- *     tags: [Insumos]
- *     summary: Obtener todos los insumos
- *     description: Recupera una lista de todos los insumos disponibles.
+ *     tags: [Productos]
+ *     summary: Obtener todos los productos
+ *     description: Recupera una lista de todos los productos disponibles.
  *     responses:
  *       200:
- *         description: Lista de insumos obtenida exitosamente
+ *         description: Lista de productos obtenida exitosamente
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Insumo'
+ *                 $ref: '#/components/schemas/Producto'
  *       500:
  *         description: Error interno del servidor
  *         content:
@@ -102,31 +121,31 @@ router.post('/', insumoControlador.crearInsumo);
  *                 error:
  *                   type: string
  */
-router.get('/', insumoControlador.obtenerInsumos);
+router.get('/', productoControlador.obtenerProductos);
 
 /**
  * @swagger
- * /insumos/{id}:
+ * /productos/{id}:
  *   get:
- *     tags: [Insumos]
- *     summary: Obtener un insumo por ID
- *     description: Recupera un insumo específico mediante su ID.
+ *     tags: [Productos]
+ *     summary: Obtener un producto por ID
+ *     description: Recupera un producto por su ID.
  *     parameters:
  *       - in: path
  *         name: id
+ *         description: ID del producto
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: ID único del insumo
  *     responses:
  *       200:
- *         description: Insumo encontrado
+ *         description: Producto obtenido exitosamente
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Insumo'
+ *               $ref: '#/components/schemas/Producto'
  *       404:
- *         description: Insumo no encontrado
+ *         description: Producto no encontrado
  *         content:
  *           application/json:
  *             schema:
@@ -146,35 +165,31 @@ router.get('/', insumoControlador.obtenerInsumos);
  *                 error:
  *                   type: string
  */
-router.get('/:id', insumoControlador.obtenerInsumoPorId);
+router.get('/:id', productoControlador.obtenerProductoPorId);
 
 /**
  * @swagger
- * /insumos/{id}:
+ * /productos/{id}:
  *   put:
- *     tags: [Insumos]
- *     summary: Actualizar un insumo por ID
- *     description: Actualiza los detalles de un insumo existente mediante su ID.
+ *     tags: [Productos]
+ *     summary: Actualizar un producto por ID
+ *     description: Actualiza un producto existente en la base de datos.
  *     parameters:
  *       - in: path
  *         name: id
+ *         description: ID del producto
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: ID único del insumo a actualizar
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Insumo'
- *           example:
- *             nombre: "Harina refinada"
- *             cantidadNeta: 100
- *             precioNeto: 25.0
+ *             $ref: '#/components/schemas/Producto'
  *     responses:
  *       200:
- *         description: Insumo actualizado exitosamente
+ *         description: Producto actualizado exitosamente
  *         content:
  *           application/json:
  *             schema:
@@ -182,16 +197,17 @@ router.get('/:id', insumoControlador.obtenerInsumoPorId);
  *               properties:
  *                 message:
  *                   type: string
- *                 insumo:
- *                   $ref: '#/components/schemas/Insumo'
+ *                 producto:
+ *                   $ref: '#/components/schemas/Producto'
  *       404:
- *         description: Insumo no encontrado
+ *         description: Producto no encontrado
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
  *                 message:
+ *                   type: string
  *       500:
  *         description: Error interno del servidor
  *         content:
@@ -204,33 +220,43 @@ router.get('/:id', insumoControlador.obtenerInsumoPorId);
  *                 error:
  *                   type: string
  */
-router.put('/:id', insumoControlador.actualizarInsumo);
+router.put('/:id', productoControlador.actualizarProducto);
 
 /**
  * @swagger
- * /insumos/{id}:
+ * /productos/{id}:
  *   delete:
- *     tags: [Insumos]
- *     summary: Eliminar un insumo por ID
- *     description: Elimina un insumo existente mediante su ID.
+ *     tags: [Productos]
+ *     summary: Eliminar un producto por ID
+ *     description: Elimina un producto de la base de datos.
  *     parameters:
  *       - in: path
  *         name: id
+ *         description: ID del producto
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: ID único del insumo a eliminar
  *     responses:
- *       204:
- *         description: Insumo eliminado exitosamente
- *       404:
- *         description: Insumo no encontrado
+ *       200:
+ *         description: Producto eliminado exitosamente
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
  *                 message:
+ *                   type: string
+ *                 producto:
+ *                   $ref: '#/components/schemas/Producto'
+ *       404:
+ *         description: Producto no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  *       500:
  *         description: Error interno del servidor
  *         content:
@@ -243,6 +269,6 @@ router.put('/:id', insumoControlador.actualizarInsumo);
  *                 error:
  *                   type: string
  */
-router.delete('/:id', insumoControlador.eliminarInsumo);
+router.delete('/:id', productoControlador.eliminarProducto);
 
 module.exports = router;
