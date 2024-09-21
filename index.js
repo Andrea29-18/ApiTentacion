@@ -3,7 +3,9 @@ const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const mongoose = require('mongoose');
 const insumoEsquema = require('./graphql/schemas/insumoEsquema');
+const categoriaProductoEsquema = require('./graphql/schemas/categoriaProductoEsquema');
 const insumoResolvers = require('./graphql/resolvers/insumoResolver');
+const categoriaProductoResolvers = require('./graphql/resolvers/categoriaProductoResolver');
 const swaggerDocs = require('./docs/swagger');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
@@ -23,9 +25,10 @@ swaggerDocs(app);
 
 // Configuración de Apollo Server
 const servidorApollo = new ApolloServer({
-    typeDefs: insumoEsquema,
-    resolvers: insumoResolvers,
+    typeDefs: [insumoEsquema, categoriaProductoEsquema],
+    resolvers: [insumoResolvers, categoriaProductoResolvers],
 });
+
 
 // Middleware de Apollo Server
 servidorApollo.start().then(() => {
