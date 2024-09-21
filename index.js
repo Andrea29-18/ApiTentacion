@@ -2,24 +2,35 @@ require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const mongoose = require('mongoose');
-
-// Esquemas
-const insumoEsquema = require('./graphql/schemas/insumoEsquema');
-const categoriaProductoEsquema = require('./graphql/schemas/categoriaProductoEsquema');
-const pedidoEsquema = require('./graphql/schemas/pedidoEsquema');
-const ubicacionEsquema = require('./graphql/schemas/ubicacionEsquema');
-const productoEsquema = require('./graphql/schemas/productoEsquema');
-
-//resolver
-const insumoResolvers = require('./graphql/resolvers/insumoResolver');
-const categoriaProductoResolvers = require('./graphql/resolvers/categoriaProductoResolver');
-const pedidoResolvers = require('./graphql/resolvers/pedidoResolver');
-const ubicacionResolvers = require('./graphql/resolvers/ubicacionResolver');
-const productoResolvers = require('./graphql/resolvers/productoResolver');
-
-// Documentación de la API
+const { mergeTypeDefs, mergeResolvers } = require('@graphql-tools/merge');
 const swaggerDocs = require('./docs/swagger');
 const errorMiddleware = require('./middlewares/errorMiddleware');
+
+// Importar esquemas y resolvers
+const esquemas = [
+    require('./graphql/schemas/insumoEsquema'),
+    require('./graphql/schemas/categoriaProductoEsquema'),
+    require('./graphql/schemas/pedidoEsquema'),
+    require('./graphql/schemas/ubicacionEsquema'),
+    require('./graphql/schemas/productoEsquema')
+];
+
+const resolvers = [
+    require('./graphql/resolvers/insumoResolver'),
+    require('./graphql/resolvers/categoriaProductoResolver'),
+    require('./graphql/resolvers/pedidoResolver'),
+    require('./graphql/resolvers/ubicacionResolver'),
+    require('./graphql/resolvers/productoResolver')
+];
+
+// Importar rutas
+const rutas = {
+    insumos: require('./routes/insumoRutas'),
+    ubicaciones: require('./routes/ubicacionRutas'),
+    productos: require('./routes/productoRutas'),
+    categoriasProducto: require('./routes/categoriaProductoRutas'),
+    pedidos: require('./routes/pedidoRutas')
+};
 
 const app = express();
 const puerto = process.env.PORT || 8080;
@@ -28,46 +39,50 @@ const puerto = process.env.PORT || 8080;
 app.use(express.json());
 
 // Conexión a la base de datos
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('Conexión a la BD exitosa'))
-    .catch(err => console.error('Error de conexión a la BD', err));
+const conectarBD = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('Conexión a la BD exitosa');
+    } catch (err) {
+        console.error('Error de conexión a la BD', err);
+    }
+};
 
-// Configuración de Swagger
-swaggerDocs(app);
+// Definir servidorApollo aquí
+let servidorApollo;
 
 // Configuración de Apollo Server
-const servidorApollo = new ApolloServer({
-    typeDefs: [insumoEsquema, categoriaProductoEsquema, pedidoEsquema, ubicacionEsquema, productoEsquema],
-    resolvers: [insumoResolvers, categoriaProductoResolvers, pedidoResolvers, ubicacionResolvers, productoResolvers],
-});
+const configurarApollo = async () => {
+    servidorApollo = new ApolloServer({
+        typeDefs: mergeTypeDefs(esquemas),
+        resolvers: mergeResolvers(resolvers),
+    });
 
-
-// Middleware de Apollo Server
-servidorApollo.start().then(() => {
+    await servidorApollo.start();
     servidorApollo.applyMiddleware({ app });
-    
-    // Rutas de la API REST
-// Importar rutas
-const insumoRutas = require('./routes/insumoRutas');
-const ubicacionRutas = require('./routes/ubicacionRutas');
-const productoRutas = require('./routes/productoRutas');
-const categoriaProductoRutas = require('./routes/categoriaProductoRutas');
-const pedidoRutas = require('./routes/pedidoRutas');
+};
 
-// Usar las rutas
-app.use('/insumos', insumoRutas);
-app.use('/ubicaciones', ubicacionRutas);
-app.use('/productos', productoRutas);
-app.use('/categoriasProducto', categoriaProductoRutas);
-app.use('/pedidos', pedidoRutas);
+// Configurar rutas
+const configurarRutas = () => {
+    Object.entries(rutas).forEach(([key, route]) => {
+        app.use(`/${key}`, route);
+    });
+};
 
-// Middleware de error
-app.use(errorMiddleware);;
+// Inicializar el servidor
+const iniciarServidor = async () => {
+    await conectarBD();
+    await swaggerDocs(app);
+    await configurarApollo();
+    configurarRutas();
+    app.use(errorMiddleware);
 
-// Inicia el servidor
-app.listen(puerto, () => {
-    console.log(`Servidor corriendo en el puerto ${puerto}`);
-    console.log(`Documentación de la API disponible en: http://localhost:${puerto}/api-docs`);
-    console.log(`Servidor GraphQL disponible en: http://localhost:${puerto}${servidorApollo.graphqlPath}`);
-});
-});
+    app.listen(puerto, () => {
+        console.log(`Servidor corriendo en el puerto ${puerto}`);
+        console.log(`Documentación de la API disponible en: http://localhost:${puerto}/api-docs`);
+        console.log(`Servidor GraphQL disponible en: http://localhost:${puerto}${servidorApollo.graphqlPath}`);
+    });
+};
+
+// Ejecutar la inicialización del servidor
+iniciarServidor();
