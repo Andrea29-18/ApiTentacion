@@ -1,4 +1,4 @@
-const Insumo = require('../../models/insumoModelo'); // Asegúrate de que la ruta sea correcta
+const Insumo = require('../../models/insumoModelo'); 
 
 const insumoResolvers = {
     Query: {

@@ -4,8 +4,10 @@ const { ApolloServer } = require('apollo-server-express');
 const mongoose = require('mongoose');
 const insumoEsquema = require('./graphql/schemas/insumoEsquema');
 const categoriaProductoEsquema = require('./graphql/schemas/categoriaProductoEsquema');
+const pedidoEsquema = require('./graphql/schemas/pedidoEsquema');
 const insumoResolvers = require('./graphql/resolvers/insumoResolver');
 const categoriaProductoResolvers = require('./graphql/resolvers/categoriaProductoResolver');
+const pedidoResolvers = require('./graphql/resolvers/pedidoResolver');
 const swaggerDocs = require('./docs/swagger');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
@@ -25,8 +27,8 @@ swaggerDocs(app);
 
 // Configuración de Apollo Server
 const servidorApollo = new ApolloServer({
-    typeDefs: [insumoEsquema, categoriaProductoEsquema],
-    resolvers: [insumoResolvers, categoriaProductoResolvers],
+    typeDefs: [insumoEsquema, categoriaProductoEsquema, pedidoEsquema],
+    resolvers: [insumoResolvers, categoriaProductoResolvers, pedidoResolvers],
 });
 
 
