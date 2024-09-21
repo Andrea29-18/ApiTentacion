@@ -36,11 +36,13 @@ servidorApollo.start().then(() => {
 const insumoRutas = require('./routes/insumoRutas');
 const ubicacionRutas = require('./routes/ubicacionRutas');
 const productoRutas = require('./routes/productoRutas');
+const categoriaProductoRutas = require('./routes/categoriaProductoRutas');
 
 // Usar las rutas
 app.use('/insumos', insumoRutas);
 app.use('/ubicaciones', ubicacionRutas);
 app.use('/productos', productoRutas);
+app.use('/categoriasProducto', categoriaProductoRutas);
 
 // Middleware de error
 app.use(errorMiddleware);;
