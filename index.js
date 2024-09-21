@@ -2,12 +2,20 @@ require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const mongoose = require('mongoose');
+
+// Esquemas
 const insumoEsquema = require('./graphql/schemas/insumoEsquema');
 const categoriaProductoEsquema = require('./graphql/schemas/categoriaProductoEsquema');
 const pedidoEsquema = require('./graphql/schemas/pedidoEsquema');
+const ubicacionEsquema = require('./graphql/schemas/ubicacionEsquema');
+
+//resolver
 const insumoResolvers = require('./graphql/resolvers/insumoResolver');
 const categoriaProductoResolvers = require('./graphql/resolvers/categoriaProductoResolver');
 const pedidoResolvers = require('./graphql/resolvers/pedidoResolver');
+const ubicacionResolvers = require('./graphql/resolvers/ubicacionResolver');
+
+// Documentación de la API
 const swaggerDocs = require('./docs/swagger');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
@@ -27,8 +35,8 @@ swaggerDocs(app);
 
 // Configuración de Apollo Server
 const servidorApollo = new ApolloServer({
-    typeDefs: [insumoEsquema, categoriaProductoEsquema, pedidoEsquema],
-    resolvers: [insumoResolvers, categoriaProductoResolvers, pedidoResolvers],
+    typeDefs: [insumoEsquema, categoriaProductoEsquema, pedidoEsquema, ubicacionEsquema],
+    resolvers: [insumoResolvers, categoriaProductoResolvers, pedidoResolvers, ubicacionResolvers],
 });
 
 
