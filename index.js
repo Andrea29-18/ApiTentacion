@@ -8,12 +8,14 @@ const insumoEsquema = require('./graphql/schemas/insumoEsquema');
 const categoriaProductoEsquema = require('./graphql/schemas/categoriaProductoEsquema');
 const pedidoEsquema = require('./graphql/schemas/pedidoEsquema');
 const ubicacionEsquema = require('./graphql/schemas/ubicacionEsquema');
+const productoEsquema = require('./graphql/schemas/productoEsquema');
 
 //resolver
 const insumoResolvers = require('./graphql/resolvers/insumoResolver');
 const categoriaProductoResolvers = require('./graphql/resolvers/categoriaProductoResolver');
 const pedidoResolvers = require('./graphql/resolvers/pedidoResolver');
 const ubicacionResolvers = require('./graphql/resolvers/ubicacionResolver');
+const productoResolvers = require('./graphql/resolvers/productoResolver');
 
 // Documentación de la API
 const swaggerDocs = require('./docs/swagger');
@@ -35,8 +37,8 @@ swaggerDocs(app);
 
 // Configuración de Apollo Server
 const servidorApollo = new ApolloServer({
-    typeDefs: [insumoEsquema, categoriaProductoEsquema, pedidoEsquema, ubicacionEsquema],
-    resolvers: [insumoResolvers, categoriaProductoResolvers, pedidoResolvers, ubicacionResolvers],
+    typeDefs: [insumoEsquema, categoriaProductoEsquema, pedidoEsquema, ubicacionEsquema, productoEsquema],
+    resolvers: [insumoResolvers, categoriaProductoResolvers, pedidoResolvers, ubicacionResolvers, productoResolvers],
 });
 
 
