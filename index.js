@@ -6,7 +6,7 @@ const swaggerDocs = require('./docs/swagger');
 require('dotenv').config();
 
 const app = express();
-const puerto = process.env.PORT || 3003; // Usa el puerto del .env o 3003 por defecto
+const puerto = process.env.PORT || 3003;
 
 conectarBaseDatos()
     .catch(err => {
@@ -25,16 +25,16 @@ app.use(express.json());
 swaggerDocs(app);
 
 // Importar rutas
-const insumoRutas = require('./routes/insumoRutas');
 const ubicacionRutas = require('./routes/ubicacionRutas');
 const productoRutas = require('./routes/productoRutas');
 const categoriaProductoRutas = require('./routes/categoriaProductoRutas');
+const insumosRutas = require('./routes/insumosRutas');
 
 // Usar las rutas
-app.use('/insumos', insumoRutas);
 app.use('/ubicaciones', ubicacionRutas);
 app.use('/productos', productoRutas);
 app.use('/categoriasProducto', categoriaProductoRutas);
+app.use('/insumos', insumosRutas);
 
 // Middleware de error
 app.use(errorMiddleware);
