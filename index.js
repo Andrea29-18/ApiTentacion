@@ -1,3 +1,5 @@
+// index.js
+
 require('dotenv').config();
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
@@ -23,67 +25,39 @@ const resolvers = [
     require('./graphql/resolvers/productoResolver')
 ];
 
-// Importar rutas
+// Importar rutas con nombres consistentes
 const rutas = {
-    insumos: require('./routes/insumoRutas'),
+    insumos: require('./routes/insumosRutas'), // Asegúrate de que el archivo se llama 'insumosRutas.js'
     ubicaciones: require('./routes/ubicacionRutas'),
     productos: require('./routes/productoRutas'),
     categoriasProducto: require('./routes/categoriaProductoRutas'),
     pedidos: require('./routes/pedidoRutas')
 };
 
+// Inicializar Express
 const app = express();
-const puerto = process.env.PORT || 3003;
 
-conectarBaseDatos()
-    .catch(err => {
-        console.error('No se pudo conectar a la base de datos. El servidor no se iniciará.');
-        process.exit(1);
-    });
-
-// La primera vez que ejecutes la API con exito, comentá la siguiente línea para evitar que se inserten los datos iniciales cada vez que se inicie el servidor
-
-//insertarDatosIniciales();
-
+// Middleware para parsear URL-encoded y JSON
 app.use(express.urlencoded({ extended: false }));
-const puerto = process.env.PORT || 8080;
-
-// Middleware para parsear JSON
 app.use(express.json());
 
 // Configuración de Swagger
 swaggerDocs(app);
 
-// Importar rutas
-const ubicacionRutas = require('./routes/ubicacionRutas');
-const productoRutas = require('./routes/productoRutas');
-const categoriaProductoRutas = require('./routes/categoriaProductoRutas');
-const pedidoRutas = require('./routes/pedidoRutas');
-const insumosRutas = require('./routes/insumosRutas');
-
-// Usar las rutas
-app.use('/ubicaciones', ubicacionRutas);
-app.use('/productos', productoRutas);
-app.use('/categoriasProducto', categoriaProductoRutas);
-app.use('/pedidos', pedidoRutas);
-app.use('/insumos', insumosRutas);
-
-// Middleware de error
-app.use(errorMiddleware);
-// Conexión a la base de datos
+// Función para conectar a la base de datos
 const conectarBD = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);
         console.log('Conexión a la BD exitosa');
     } catch (err) {
         console.error('Error de conexión a la BD', err);
+        throw err; // Para que el servidor no inicie si hay un error
     }
 };
 
-// Definir servidorApollo aquí
+// Función para configurar Apollo Server
 let servidorApollo;
 
-// Configuración de Apollo Server
 const configurarApollo = async () => {
     servidorApollo = new ApolloServer({
         typeDefs: mergeTypeDefs(esquemas),
@@ -94,26 +68,35 @@ const configurarApollo = async () => {
     servidorApollo.applyMiddleware({ app });
 };
 
-// Configurar rutas
+// Función para configurar las rutas
 const configurarRutas = () => {
     Object.entries(rutas).forEach(([key, route]) => {
         app.use(`/${key}`, route);
     });
 };
 
-// Inicializar el servidor
+// Función para iniciar el servidor
 const iniciarServidor = async () => {
-    await conectarBD();
-    await swaggerDocs(app);
-    await configurarApollo();
-    configurarRutas();
-    app.use(errorMiddleware);
+    try {
+        await conectarBD();
+        await configurarApollo();
+        configurarRutas(); // Configurar rutas después de Apollo
 
-    app.listen(puerto, () => {
-        console.log(`Servidor corriendo en el puerto ${puerto}`);
-        console.log(`Documentación de la API disponible en: http://localhost:${puerto}/api-docs`);
-        console.log(`Servidor GraphQL disponible en: http://localhost:${puerto}${servidorApollo.graphqlPath}`);
-    });
+        // Middleware de error debe ir después de las rutas
+        app.use(errorMiddleware);
+
+        const puerto = process.env.PORT || 8080;
+
+        // Iniciar el servidor
+        app.listen(puerto, () => {
+            console.log(`Servidor corriendo en el puerto ${puerto}`);
+            console.log(`Documentación de la API disponible en: http://localhost:${puerto}/api-docs`);
+            console.log(`Servidor GraphQL disponible en: http://localhost:${puerto}${servidorApollo.graphqlPath}`);
+        });
+    } catch (err) {
+        console.error('No se pudo iniciar el servidor debido a un error:', err);
+        process.exit(1);
+    }
 };
 
 // Ejecutar la inicialización del servidor
