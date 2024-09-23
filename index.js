@@ -28,12 +28,14 @@ swaggerDocs(app);
 const ubicacionRutas = require('./routes/ubicacionRutas');
 const productoRutas = require('./routes/productoRutas');
 const categoriaProductoRutas = require('./routes/categoriaProductoRutas');
+const pedidoRutas = require('./routes/pedidoRutas');
 const insumosRutas = require('./routes/insumosRutas');
 
 // Usar las rutas
 app.use('/ubicaciones', ubicacionRutas);
 app.use('/productos', productoRutas);
 app.use('/categoriasProducto', categoriaProductoRutas);
+app.use('/pedidos', pedidoRutas);
 app.use('/insumos', insumosRutas);
 
 // Middleware de error
