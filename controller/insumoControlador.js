@@ -68,10 +68,43 @@ const eliminarInsumo = async (req, res) => {
     }
 };
 
+// Calcular el costo de los insumos utilizados
+const calcularCosteo = async (req, res) => {
+    const { insumosUtilizados } = req.body; // [{ insumoId, cantidadUtilizada }]
+
+    try {
+        let costoTotal = 0;
+
+        // Iterar sobre cada insumo utilizado
+        for (const item of insumosUtilizados) {
+            const insumo = await Insumo.findById(item.insumoId);
+            if (!insumo) {
+                return res.status(404).json({ message: `Insumo con ID ${item.insumoId} no encontrado` });
+            }
+
+            // Calcular el precio por unidad
+            const precioPorUnidad = insumo.precioNeto / insumo.cantidadNeta;
+
+            // Calcular el costo de la cantidad utilizada
+            const costoInsumo = precioPorUnidad * item.cantidadUtilizada;
+
+            // Sumar al costo total
+            costoTotal += costoInsumo;
+        }
+
+        // Responder con el costo total
+        res.status(200).json({ costoTotal });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al calcular costeo', error: error.message });
+    }
+};
+
 module.exports = {
     crearInsumo,
     obtenerInsumos,
     obtenerInsumoPorId,
     actualizarInsumo,
     eliminarInsumo,
+    calcularCosteo,
 };

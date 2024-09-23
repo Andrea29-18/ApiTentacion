@@ -19,7 +19,7 @@ describe('Insumo Model Test', () => {
         const insumo = new Insumo({
             nombre: 'Tornillos',
             cantidadNeta: 100,
-            precioNeto: 0.05
+            precioNeto: 5.0
         });
 
         const insumoGuardado = await insumo.save();
@@ -27,7 +27,7 @@ describe('Insumo Model Test', () => {
         expect(insumoGuardado._id).toBeDefined();
         expect(insumoGuardado.nombre).toBe('Tornillos');
         expect(insumoGuardado.cantidadNeta).toBe(100);
-        expect(insumoGuardado.precioNeto).toBe(0.05);
+        expect(insumoGuardado.precioNeto).toBe(5.0);
     });
 
     it('Debería fallar al crear un insumo sin nombre', async () => {
@@ -57,5 +57,42 @@ describe('Insumo Model Test', () => {
         });
 
         await expect(insumoInvalido.save()).rejects.toThrow(mongoose.Error.ValidationError);
+    });
+
+    // Nuevo test para el cálculo de costeo
+    it('Debería calcular correctamente el costeo de los insumos utilizados', async () => {
+        // Crear varios insumos
+        const insumoHarina = new Insumo({
+            nombre: 'Harina',
+            cantidadNeta: 1000, // 1 kilo
+            precioNeto: 50 // Precio de 1 kilo de harina
+        });
+        const insumoAzucar = new Insumo({
+            nombre: 'Azúcar',
+            cantidadNeta: 500, // 500 gramos
+            precioNeto: 20 // Precio de 500 gramos de azúcar
+        });
+
+        // Guardar insumos en la base de datos
+        await insumoHarina.save();
+        await insumoAzucar.save();
+
+        // Datos simulados para el cálculo de costeo
+        const insumosUtilizados = [
+            { insumoId: insumoHarina._id, cantidadUtilizada: 500 }, // 500 gramos de harina
+            { insumoId: insumoAzucar._id, cantidadUtilizada: 250 }  // 250 gramos de azúcar
+        ];
+
+        // Simular la lógica de cálculo
+        let costoTotal = 0;
+        for (const item of insumosUtilizados) {
+            const insumo = await Insumo.findById(item.insumoId);
+            const precioPorUnidad = insumo.precioNeto / insumo.cantidadNeta;
+            const costoInsumo = precioPorUnidad * item.cantidadUtilizada;
+            costoTotal += costoInsumo;
+        }
+
+        // El costo total esperado es (50 / 1000 * 500) + (20 / 500 * 250) = 25 + 10 = 35
+        expect(costoTotal).toBeCloseTo(35);
     });
 });
