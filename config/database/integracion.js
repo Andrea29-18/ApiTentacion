@@ -1,33 +1,111 @@
+const mongoose = require('mongoose');
 const Producto = require('../../models/productoModelo');
 const Cliente = require('../../models/clienteModelo');
 const Administrador = require('../../models/administradorModelo');
+const CategoriaProducto = require('../../models/categoriaProductoModelo');
+const Insumo = require('../../models/insumoModelo');
+const Pedido = require('../../models/pedidosModelo');
+const Sucursal = require('../../models/sucursalModelo');
+const Ubicacion = require('../../models/ubicacionModelo');
 
 const insertarDatosIniciales = async () => {
     try {
+        // Insertar insumos
+        const cantidadInsumos = await Insumo.countDocuments();
+        if (cantidadInsumos === 0) {
+            await Insumo.insertMany([
+                { nombre: 'Harina', cantidadNeta: 1000, precioNeto: 80 },
+                { nombre: 'Azúcar', cantidadNeta: 500, precioNeto: 50 }
+            ]);
+            console.log('Insumos insertados');
+        }
+
+        // Insertar categorías de productos
+        const cantidadCategorias = await CategoriaProducto.countDocuments();
+        if (cantidadCategorias === 0) {
+            await CategoriaProducto.insertMany([
+                { nombreCategoria: 'Repostería', descripcionCategoria: 'Dulces y pasteles' },
+                { nombreCategoria: 'Panadería', descripcionCategoria: 'Pan y otros productos de panadería' }
+            ]);
+            console.log('Categorías de productos insertadas');
+        }
+
+        // Insertar ubicaciones
+        const cantidadUbicaciones = await Ubicacion.countDocuments();
+        if (cantidadUbicaciones === 0) {
+            await Ubicacion.insertMany([
+                { descripcion: 'Sucursal Principal', longitud: -99.1332, latitud: 19.4326 },
+                { descripcion: 'Sucursal Secundaria', longitud: -98.9815, latitud: 19.3967 }
+            ]);
+            console.log('Ubicaciones insertadas');
+        }
+
+        // Insertar productos
         const cantidadProductos = await Producto.countDocuments();
         if (cantidadProductos === 0) {
+            // Primero, obtener los insumos y categorías para referenciarlos
+            const insumos = await Insumo.find();
+            const categorias = await CategoriaProducto.find();
+
             await Producto.insertMany([
-                { nombre: 'Pastel de chocolate', precio: 150, fechaVencimiento: new Date(2024, 9, 20) },
-                { nombre: 'Pastel de vainilla', precio: 130, fechaVencimiento: new Date(2024, 9, 25) },
-                { nombre: 'Pastel de fresa', precio: 140, fechaVencimiento: new Date(2024, 10, 5) },
-                { nombre: 'Pastel de tres leches', precio: 160, fechaVencimiento: new Date(2024, 10, 10) },
-                { nombre: 'Pastel de zanahoria', precio: 155, fechaVencimiento: new Date(2024, 10, 15) }
+                {
+                    nombreProducto: 'Pastel de chocolate',
+                    cantidadStock: 20,
+                    precioFinal: 150,
+                    fechaVencimiento: new Date(2024, 9, 20),
+                    insumos: [insumos[0]._id, insumos[1]._id],
+                    catalogoProducto: categorias[0]._id
+                },
+                {
+                    nombreProducto: 'Pastel de vainilla',
+                    cantidadStock: 15,
+                    precioFinal: 130,
+                    fechaVencimiento: new Date(2024, 9, 25),
+                    insumos: [insumos[0]._id],
+                    catalogoProducto: categorias[0]._id
+                }
             ]);
             console.log('Productos insertados');
         }
 
+        // Insertar pedidos
+        const cantidadPedidos = await Pedido.countDocuments();
+        if (cantidadPedidos === 0) {
+            const productos = await Producto.find(); // Tomamos productos existentes
+            await Pedido.insertMany([
+                {
+                    Productos: [productos[0]._id],
+                    precioTotal: 150
+                }
+            ]);
+            console.log('Pedidos insertados');
+        }
+
+        // Insertar sucursales
+        const cantidadSucursales = await Sucursal.countDocuments();
+        if (cantidadSucursales === 0) {
+            const pedidos = await Pedido.find(); // Tomamos pedidos existentes
+            const ubicaciones = await Ubicacion.find(); // Tomamos ubicaciones existentes
+            await Sucursal.insertMany([
+                {
+                    pedidos: [pedidos[0]._id],
+                    ubicacion: ubicaciones[0]._id
+                }
+            ]);
+            console.log('Sucursales insertadas');
+        }
+
+        // Insertar clientes
         const cantidadClientes = await Cliente.countDocuments();
         if (cantidadClientes === 0) {
             await Cliente.insertMany([
                 { nombre: 'Juan', apellidos: 'Pérez', telefono: '2281234567', fechaNacimiento: new Date(1990, 5, 12), correo: 'juan.perez@gmail.com', contrasena: '123456' },
-                { nombre: 'María', apellidos: 'López', telefono: '2282345678', fechaNacimiento: new Date(1985, 7, 22), correo: 'maria.lopez@gmail.com', contrasena: 'abcdef' },
-                { nombre: 'Carlos', apellidos: 'Ramírez', telefono: '2283456789', fechaNacimiento: new Date(1992, 9, 14), correo: 'carlos.ramirez@gmail.com', contrasena: 'qwerty' },
-                { nombre: 'Ana', apellidos: 'Martínez', telefono: '2284567890', fechaNacimiento: new Date(1995, 1, 5), correo: 'ana.martinez@gmail.com', contrasena: 'zxcvbn' },
-                { nombre: 'Pedro', apellidos: 'García', telefono: '2285678901', fechaNacimiento: new Date(1998, 3, 9), correo: 'pedro.garcia@gmail.com', contrasena: 'asdfgh' }
+                { nombre: 'María', apellidos: 'López', telefono: '2282345678', fechaNacimiento: new Date(1985, 7, 22), correo: 'maria.lopez@gmail.com', contrasena: 'abcdef' }
             ]);
             console.log('Clientes insertados');
         }
 
+        // Insertar administradores
         const cantidadAdministradores = await Administrador.countDocuments();
         if (cantidadAdministradores === 0) {
             await Administrador.insertMany([
@@ -36,6 +114,8 @@ const insertarDatosIniciales = async () => {
             ]);
             console.log('Administradores insertados');
         }
+        
+        console.log('Datos iniciales insertados correctamente');
     } catch (error) {
         console.error(`Error al insertar datos: ${error.message}`);
     }
