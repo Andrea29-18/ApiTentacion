@@ -8,15 +8,27 @@ const insumoEsquema = gql`
         precioNeto: Float!
     }
 
+    input InsumoInput {
+        nombre: String!
+        cantidadNeta: Int!
+        precioNeto: Float!
+    }
+
+    input InsumoUtilizadoInput {
+        insumoId: ID!
+        cantidadUtilizada: Float!
+    }
+
     type Query {
         obtenerInsumos: [Insumo]
         obtenerInsumoPorId(id: ID!): Insumo
     }
 
     type Mutation {
-        crearInsumo(nombre: String!, cantidadNeta: Int!, precioNeto: Float!): Insumo
-        actualizarInsumo(id: ID!, nombre: String, cantidadNeta: Int, precioNeto: Float): Insumo
+        crearInsumo(input: InsumoInput!): Insumo
+        actualizarInsumo(id: ID!, input: InsumoInput): Insumo
         eliminarInsumo(id: ID!): Boolean
+        calcularCosteo(insumosUtilizados: [InsumoUtilizadoInput!]!): Float
     }
 `;
 
