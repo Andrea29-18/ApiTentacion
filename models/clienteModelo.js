@@ -34,6 +34,11 @@ const clienteEsquema = new mongoose.Schema({
         set: cifrarTexto, // Cifra la contraseña al guardarla
         get: descifrarTexto, // La descifra al obtenerla
     },
+    // Estos puntos se pondran en automatico por cada compra dependiendo del precio de productos comprados
+    puntosAcumulados: {
+        type: Number,
+        default: 0
+    }
 });
 
 // Middleware para validar antes de guardar
