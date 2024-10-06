@@ -1,4 +1,4 @@
-const Ubicacion = require('../models/ubicacionModelo');
+import Ubicacion from '../models/ubicacionModelo';
 
 // Crear una nueva ubicación
 const crearUbicacion = async (req, res) => {
@@ -68,7 +68,7 @@ const eliminarUbicacion = async (req, res) => {
     }
 };
 
-module.exports = {
+export default{
     crearUbicacion,
     obtenerUbicaciones,
     obtenerUbicacionPorId,

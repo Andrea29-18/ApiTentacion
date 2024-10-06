@@ -1,6 +1,6 @@
-const Producto = require('../models/productoModelo');
-const Insumo = require('../models/insumoModelo');
-const CategoriaProducto = require('../models/categoriaProductoModelo');
+import Producto from '../models/productoModelo';
+import Insumo from '../models/insumoModelo';
+import CategoriaProducto from '../models/categoriaProductoModelo';
 
 // Crear un nuevo producto
 const crearProducto = async (req, res) => {
@@ -95,7 +95,7 @@ const eliminarProducto = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     crearProducto,
     obtenerProductos,
     obtenerProductoPorId,

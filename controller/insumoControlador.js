@@ -1,4 +1,4 @@
-const Insumo = require('../models/insumoModelo');
+import Insumo from '../models/insumoModelo';
 
 // Crear un nuevo insumo
 const crearInsumo = async (req, res) => {
@@ -100,7 +100,7 @@ const calcularCosteo = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     crearInsumo,
     obtenerInsumos,
     obtenerInsumoPorId,

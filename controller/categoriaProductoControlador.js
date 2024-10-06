@@ -1,4 +1,4 @@
-const CategoriaProducto = require('../models/categoriaProductoModelo');
+import CategoriaProducto from '../models/categoriaProductoModelo';
 
 // Crear una nueva categoria de producto
 const crearCategoriaProducto = async (req, res) => {
@@ -68,7 +68,7 @@ const eliminarCategoriaProducto = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     crearCategoriaProducto,
     obtenerCategoriasProducto,
     obtenerCategoriaProductoPorId,

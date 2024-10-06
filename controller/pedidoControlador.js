@@ -1,5 +1,5 @@
-const Pedido = require('../models/pedidosModelo');
-const Producto = require('../models/productoModelo');
+import Pedido  from '../models/pedidosModelo';
+import Producto  from '../models/productoModelo';
 
 // Crear un nuevo pedido
 const crearPedido = async (req, res) => {
@@ -117,7 +117,7 @@ const eliminarPedido = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     crearPedido,
     obtenerPedidos,
     obtenerPedidoPorId,
