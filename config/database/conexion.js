@@ -1,4 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import process from 'process';
+
 
 const conectorBD = async () => {
     try {
@@ -10,4 +12,4 @@ const conectorBD = async () => {
     }
 };
 
-module.exports = conectorBD;
+export default conectorBD;

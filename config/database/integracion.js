@@ -1,12 +1,11 @@
-const mongoose = require('mongoose');
-const Producto = require('../../models/productoModelo');
-const Cliente = require('../../models/clienteModelo');
-const Administrador = require('../../models/administradorModelo');
-const CategoriaProducto = require('../../models/categoriaProductoModelo');
-const Insumo = require('../../models/insumoModelo');
-const Pedido = require('../../models/pedidosModelo');
-const Sucursal = require('../../models/sucursalModelo');
-const Ubicacion = require('../../models/ubicacionModelo');
+import Producto from '../../models/productoModelo';
+import Cliente from '../../models/clienteModelo';
+import Administrador from '../../models/administradorModelo';
+import CategoriaProducto from '../../models/categoriaProductoModelo';
+import Insumo from '../../models/insumoModelo';
+import Pedido from '../../models/pedidosModelo';
+import Sucursal from '../../models/sucursalModelo';
+import Ubicacion from 'models/ubicacionModelo';
 
 const insertarDatosIniciales = async () => {
     try {
@@ -121,4 +120,4 @@ const insertarDatosIniciales = async () => {
     }
 };
 
-module.exports = insertarDatosIniciales;
+export default insertarDatosIniciales;

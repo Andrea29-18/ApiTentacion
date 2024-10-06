@@ -1,16 +1,19 @@
-const express = require('express');
-const conectarBaseDatos = require('./config/database/conexion');
-const insertarDatosIniciales = require('./config/database/integracion');
-const errorMiddleware = require('./middlewares/errorMiddleware');
-const swaggerDocs = require('./docs/swagger');
-require('dotenv').config();
+import  express from 'express';
+import conectarBaseDatos from './config/database/conexion';
+//import insertarDatosIniciales from './config/database/integracion';
+import errorMiddleware from './middlewares/errorMiddleware';
+import swaggerDocs from './docs/swagger';
+import dotenv from 'dotenv';
+import process from 'process';
+
+dotenv.config();
 
 const app = express();
 const puerto = process.env.PORT || 3003;
 
 conectarBaseDatos()
     .catch(err => {
-        console.error('No se pudo conectar a la base de datos. El servidor no se iniciará.');
+        console.error('No se pudo conectar a la base de datos. El servidor no se iniciará. Error:', err);
         process.exit(1);
     });
 
@@ -25,11 +28,11 @@ app.use(express.json());
 swaggerDocs(app);
 
 // Importar rutas
-const ubicacionRutas = require('./routes/ubicacionRutas');
-const productoRutas = require('./routes/productoRutas');
-const categoriaProductoRutas = require('./routes/categoriaProductoRutas');
-const pedidoRutas = require('./routes/pedidoRutas');
-const insumosRutas = require('./routes/insumosRutas');
+import ubicacionRutas from './routes/ubicacionRutas';
+import productoRutas from './routes/productoRutas';
+import categoriaProductoRutas from './routes/categoriaProductoRutas';
+import pedidoRutas from './routes/pedidoRutas';
+import insumosRutas from './routes/insumosRutas';
 
 // Usar las rutas
 app.use('/ubicaciones', ubicacionRutas);
