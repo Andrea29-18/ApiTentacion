@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const insumoSchema = new mongoose.Schema({
     nombre: {
@@ -15,4 +15,4 @@ const insumoSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Insumo', insumoSchema, 'insumos');
+export default mongoose.model('Insumo', insumoSchema, 'insumos');

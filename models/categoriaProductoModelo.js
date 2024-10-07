@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const categoriaProductoEsquema = new mongoose.Schema({
     nombreCategoria: {
@@ -12,4 +12,4 @@ const categoriaProductoEsquema = new mongoose.Schema({
 });
 
 const CategoriaProducto = mongoose.model('CategoriaProducto', categoriaProductoEsquema);
-module.exports = CategoriaProducto;
+export default CategoriaProducto;

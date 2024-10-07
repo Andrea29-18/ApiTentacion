@@ -1,5 +1,5 @@
-const express = require('express');
-const ubicacionControlador = require('../controller/ubicacionControlador');
+import express from 'express';
+import ubicacionControlador from '../controller/ubicacionControlador';
 
 const router = express.Router();
 
@@ -248,4 +248,4 @@ router.put('/:id', ubicacionControlador.actualizarUbicacion);
  */
 router.delete('/:id', ubicacionControlador.eliminarUbicacion);
 
-module.exports = router;
+export default router;

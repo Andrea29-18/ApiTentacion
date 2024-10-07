@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const categoriaProductoControlador = require('../controller/categoriaProductoControlador');
+import categoriaProductoControlador from '../controller/categoriaProductoControlador';
 
 /**
  * @swagger
@@ -246,5 +246,4 @@ router.put('/:id', categoriaProductoControlador.actualizarCategoriaProducto);
  *                   type: string
  */
 router.delete('/:id', categoriaProductoControlador.eliminarCategoriaProducto);
-
-module.exports = router;
+export default router;

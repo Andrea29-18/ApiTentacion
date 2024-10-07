@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const pedidoControlador = require('../controller/pedidoControlador');
+import pedidoControlador from '../controller/pedidoControlador';
 
 /**
  * @swagger
@@ -287,4 +287,4 @@ router.put('/:id', pedidoControlador.actualizarPedido);
  */
 router.delete('/:id', pedidoControlador.eliminarPedido);
 
-module.exports = router;
+export default router;

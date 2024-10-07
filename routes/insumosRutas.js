@@ -1,13 +1,13 @@
-const express = require('express');
+import  express from 'express';
 const router = express.Router();
-const {
+import {
     crearInsumo,
     obtenerInsumos,
     obtenerInsumoPorId,
     actualizarInsumo,
     eliminarInsumo,
     calcularCosteo
-} = require('../controller/insumoControlador');
+} from '../controller/insumoControlador';
 
 // Definir rutas
 router.post('/', crearInsumo);
@@ -19,4 +19,4 @@ router.delete('/:id', eliminarInsumo);
 // Ruta para calcular el costeo de los insumos utilizados
 router.post('/costeo', calcularCosteo);
 
-module.exports = router;
+export default router;

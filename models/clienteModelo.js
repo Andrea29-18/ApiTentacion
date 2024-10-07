@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const { cifrarTexto, descifrarTexto } = require('../utils/cifrado');
-const { validarCliente } = require('../middlewares/clienteMiddleware');
+import mongoose from 'mongoose';
+import { cifrarTexto, descifrarTexto } from '../utils/cifrado';
+import { validarCliente } from '../middlewares/clienteMiddleware';
 
 const clienteEsquema = new mongoose.Schema({
     nombre: {
@@ -40,4 +40,4 @@ const clienteEsquema = new mongoose.Schema({
 clienteEsquema.pre('save', validarCliente);
 
 const Cliente = mongoose.model('Cliente', clienteEsquema);
-module.exports = Cliente;
+export default Cliente;

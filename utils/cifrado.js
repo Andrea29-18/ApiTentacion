@@ -1,5 +1,5 @@
-const crypto = require('crypto');
-
+import crypto from 'crypto';
+import { Buffer } from 'buffer';
 const algoritmo = 'aes-256-cbc';
 const clave = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
@@ -27,4 +27,4 @@ const compararContrasena = (contrasenaIngresada, contrasenaAlmacenada) => {
     return contrasenaIngresada === contrasenaDescifrada;
 };
 
-module.exports = { cifrarTexto, descifrarTexto, compararContrasena };
+export default { cifrarTexto, descifrarTexto, compararContrasena };

@@ -16,7 +16,7 @@ function validarTelefono(telefono) {
     return regex.test(telefono);
 }
 
-module.exports = {
+export default {
     validarContrasena,
     validarCorreo,
     validarTelefono

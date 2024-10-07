@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ubicacionEsquema = new mongoose.Schema({
     descripcion: {
@@ -16,4 +16,4 @@ const ubicacionEsquema = new mongoose.Schema({
 });
 
 const Ubicacion = mongoose.model('Ubicacion', ubicacionEsquema);
-module.exports = Ubicacion;
+export default Ubicacion;

@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const { cifrarTexto, descifrarTexto } = require('../utils/cifrado');
-const { validarAdministrador } = require('../middlewares/administradorMiddleware');
+import  mongoose from 'mongoose';
+import  { cifrarTexto, descifrarTexto } from '../utils/cifrado';
+import  { validarAdministrador } from '../middlewares/administradorMiddleware';
 
 const administradorEsquema = new mongoose.Schema({
     nombre: {
@@ -35,4 +35,4 @@ const administradorEsquema = new mongoose.Schema({
 administradorEsquema.pre('save', validarAdministrador);
 
 const Administrador = mongoose.model('Administrador', administradorEsquema);
-module.exports = Administrador;
+export default Administrador;

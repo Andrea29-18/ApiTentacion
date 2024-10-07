@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const Pedido = require('./pedidosModelo'); // Asegúrate de importar correctamente el modelo Pedido
+import mongoose from 'mongoose';
 
 const sucursalEsquema = new mongoose.Schema({
     pedidos: [
@@ -15,4 +14,4 @@ const sucursalEsquema = new mongoose.Schema({
 });
 
 const Sucursal = mongoose.model('Sucursal', sucursalEsquema);
-module.exports = Sucursal;
+export default Sucursal;

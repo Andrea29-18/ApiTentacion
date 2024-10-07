@@ -1,5 +1,5 @@
-const express = require('express');
-const productoControlador = require('../controller/productoControlador');
+import express from 'express';
+import productoControlador from '../controller/productoControlador';
 const router = express.Router();
 
 /**
@@ -271,4 +271,4 @@ router.put('/:id', productoControlador.actualizarProducto);
  */
 router.delete('/:id', productoControlador.eliminarProducto);
 
-module.exports = router;
+export default router;

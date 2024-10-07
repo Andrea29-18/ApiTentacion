@@ -1,4 +1,4 @@
-const { validarContrasena, validarTelefono } = require('../utils/validacion');
+import { validarContrasena, validarTelefono } from '../utils/validacion';
 
 const validarAdministrador = async function(next) {
     // Validar contraseña
@@ -14,4 +14,4 @@ const validarAdministrador = async function(next) {
     next();
 };
 
-module.exports = { validarAdministrador };
+export default { validarAdministrador };
