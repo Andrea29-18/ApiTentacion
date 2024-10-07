@@ -1,4 +1,4 @@
-import { validarContrasena, validarTelefono } from '../utils/validacion';
+import { validarContrasena, validarTelefono } from '../utils/validacion.js';
 
 const validarAdministrador = async function(next) {
     // Validar contraseña

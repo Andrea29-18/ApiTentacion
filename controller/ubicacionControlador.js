@@ -1,7 +1,7 @@
-import Ubicacion from '../models/ubicacionModelo';
+import Ubicacion from '../models/ubicacionModelo.js';
 
 // Crear una nueva ubicación
-const crearUbicacion = async (req, res) => {
+export const crearUbicacion = async (req, res) => {
     try {
         const nuevaUbicacion = new Ubicacion(req.body);
         await nuevaUbicacion.save();
@@ -13,7 +13,7 @@ const crearUbicacion = async (req, res) => {
 };
 
 // Obtener todas las ubicaciones
-const obtenerUbicaciones = async (req, res) => {
+export const obtenerUbicaciones = async (req, res) => {
     try {
         const ubicaciones = await Ubicacion.find();
         res.status(200).json(ubicaciones);
@@ -24,7 +24,7 @@ const obtenerUbicaciones = async (req, res) => {
 };
 
 // Obtener una ubicación por ID
-const obtenerUbicacionPorId = async (req, res) => {
+export const obtenerUbicacionPorId = async (req, res) => {
     const { id } = req.params;
     try {
         const ubicacion = await Ubicacion.findById(id);
@@ -39,7 +39,7 @@ const obtenerUbicacionPorId = async (req, res) => {
 };
 
 // Actualizar una ubicación por ID
-const actualizarUbicacion = async (req, res) => {
+export const actualizarUbicacion = async (req, res) => {
     const { id } = req.params;
     try {
         const ubicacionActualizada = await Ubicacion.findByIdAndUpdate(id, req.body, { new: true });
@@ -54,7 +54,7 @@ const actualizarUbicacion = async (req, res) => {
 };
 
 // Eliminar una ubicación por ID
-const eliminarUbicacion = async (req, res) => {
+export const eliminarUbicacion = async (req, res) => {
     const { id } = req.params;
     try {
         const ubicacionEliminada = await Ubicacion.findByIdAndDelete(id);

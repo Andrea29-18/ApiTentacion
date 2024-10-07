@@ -7,7 +7,7 @@ import {
     actualizarInsumo,
     eliminarInsumo,
     calcularCosteo
-} from '../controller/insumoControlador';
+} from '../controller/insumoControlador.js';
 
 // Definir rutas
 router.post('/', crearInsumo);

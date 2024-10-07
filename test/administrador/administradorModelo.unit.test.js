@@ -1,5 +1,5 @@
-import { connectDB, disconnectDB } from '../setup';
-import Administrador from '../../models/administradorModelo';
+import { connectDB, disconnectDB } from '../setup.js';
+import Administrador from '../../models/administradorModelo.js';
 import { beforeAll, afterAll, describe, it, expect, afterEach } from '@jest/globals';
 
 beforeAll(async () => {

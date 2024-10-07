@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { connectDB, disconnectDB } from '../setup';
-import Insumo from '../../models/insumoModelo';
+import { connectDB, disconnectDB } from '../setup.js';
+import Insumo from '../../models/insumoModelo.js';
 import { beforeAll, afterAll, describe, it, expect, afterEach } from '@jest/globals';
 
 

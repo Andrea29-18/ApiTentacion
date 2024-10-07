@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { cifrarTexto, descifrarTexto } from '../utils/cifrado';
-import { validarCliente } from '../middlewares/clienteMiddleware';
+import { cifrarTexto, descifrarTexto } from '../utils/cifrado.js';
+import { validarCliente } from '../middlewares/clienteMiddleware.js';
 
 const clienteEsquema = new mongoose.Schema({
     nombre: {

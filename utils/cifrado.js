@@ -4,14 +4,14 @@ const algoritmo = 'aes-256-cbc';
 const clave = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
 
-const cifrarTexto = (texto) => {
+export const cifrarTexto = (texto) => {
     const cipher = crypto.createCipheriv(algoritmo, Buffer.from(clave), iv);
     let cifrado = cipher.update(texto);
     cifrado = Buffer.concat([cifrado, cipher.final()]);
     return iv.toString('hex') + ':' + cifrado.toString('hex');
 };
 
-const descifrarTexto = (texto) => {
+export const descifrarTexto = (texto) => {
     const textoPartes = texto.split(':');
     const iv = Buffer.from(textoPartes.shift(), 'hex');
     const cifrado = Buffer.from(textoPartes.join(':'), 'hex');
@@ -22,7 +22,7 @@ const descifrarTexto = (texto) => {
 };
 
 // Nueva función para comparar contraseñas
-const compararContrasena = (contrasenaIngresada, contrasenaAlmacenada) => {
+export const compararContrasena = (contrasenaIngresada, contrasenaAlmacenada) => {
     const contrasenaDescifrada = descifrarTexto(contrasenaAlmacenada);
     return contrasenaIngresada === contrasenaDescifrada;
 };

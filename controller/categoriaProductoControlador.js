@@ -1,7 +1,7 @@
-import CategoriaProducto from '../models/categoriaProductoModelo';
+import CategoriaProducto from '../models/categoriaProductoModelo.js';
 
 // Crear una nueva categoria de producto
-const crearCategoriaProducto = async (req, res) => {
+export const crearCategoriaProducto = async (req, res) => {
     try {
         const nuevaCategoriaProducto = new CategoriaProducto(req.body);
         await nuevaCategoriaProducto.save();
@@ -13,7 +13,7 @@ const crearCategoriaProducto = async (req, res) => {
 };
 
 // Obtener todas las categorias de producto
-const obtenerCategoriasProducto = async (req, res) => {
+export const obtenerCategoriasProducto = async (req, res) => {
     try {
         const categoriasProducto = await CategoriaProducto.find();
         res.status(200).json(categoriasProducto);
@@ -24,7 +24,7 @@ const obtenerCategoriasProducto = async (req, res) => {
 };
 
 // Obtener una categoria de producto por ID
-const obtenerCategoriaProductoPorId = async (req, res) => {
+export const obtenerCategoriaProductoPorId = async (req, res) => {
     const { id } = req.params;
     try {
         const categoriaProducto = await CategoriaProducto.findById(id);
@@ -39,7 +39,7 @@ const obtenerCategoriaProductoPorId = async (req, res) => {
 };
 
 // Actualizar una categoria de producto por ID
-const actualizarCategoriaProducto = async (req, res) => {
+export const actualizarCategoriaProducto = async (req, res) => {
     const { id } = req.params;
     try {
         const categoriaProductoActualizada = await CategoriaProducto.findByIdAndUpdate(id, req.body, { new: true });
@@ -54,7 +54,7 @@ const actualizarCategoriaProducto = async (req, res) => {
 };
 
 // Eliminar una categoria de producto por ID
-const eliminarCategoriaProducto = async (req, res) => {
+export const eliminarCategoriaProducto = async (req, res) => {
     const { id } = req.params;
     try {
         const categoriaProductoEliminada = await CategoriaProducto.findByIdAndDelete(id);

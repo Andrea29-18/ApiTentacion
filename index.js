@@ -1,8 +1,8 @@
-import  express from 'express';
-import conectarBaseDatos from './config/database/conexion';
+import express from 'express';
+import conectarBaseDatos from './config/database/conexion.js';
 //import insertarDatosIniciales from './config/database/integracion';
-import errorMiddleware from './middlewares/errorMiddleware';
-import swaggerDocs from './docs/swagger';
+import errorMiddleware from './middlewares/errorMiddleware.js';
+import swaggerDocs from './docs/swagger.js';
 import dotenv from 'dotenv';
 import process from 'process';
 
@@ -28,11 +28,11 @@ app.use(express.json());
 swaggerDocs(app);
 
 // Importar rutas
-import ubicacionRutas from './routes/ubicacionRutas';
-import productoRutas from './routes/productoRutas';
-import categoriaProductoRutas from './routes/categoriaProductoRutas';
-import pedidoRutas from './routes/pedidoRutas';
-import insumosRutas from './routes/insumosRutas';
+import ubicacionRutas from './routes/ubicacionRutas.js';
+import productoRutas from './routes/productoRutas.js';
+import categoriaProductoRutas from './routes/categoriaProductoRutas.js';
+import pedidoRutas from './routes/pedidoRutas.js';
+import insumosRutas from './routes/insumosRutas.js';
 
 // Usar las rutas
 app.use('/ubicaciones', ubicacionRutas);

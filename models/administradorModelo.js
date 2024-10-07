@@ -1,6 +1,6 @@
 import  mongoose from 'mongoose';
-import  { cifrarTexto, descifrarTexto } from '../utils/cifrado';
-import  { validarAdministrador } from '../middlewares/administradorMiddleware';
+import  { cifrarTexto, descifrarTexto } from '../utils/cifrado.js';
+import  { validarAdministrador } from '../middlewares/administradorMiddleware.js';
 
 const administradorEsquema = new mongoose.Schema({
     nombre: {

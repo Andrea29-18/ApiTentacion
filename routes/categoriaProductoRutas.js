@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import categoriaProductoControlador from '../controller/categoriaProductoControlador';
+import categoriaProductoControlador from '../controller/categoriaProductoControlador.js';
 
 /**
  * @swagger

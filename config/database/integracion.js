@@ -1,11 +1,11 @@
-import Producto from '../../models/productoModelo';
-import Cliente from '../../models/clienteModelo';
-import Administrador from '../../models/administradorModelo';
-import CategoriaProducto from '../../models/categoriaProductoModelo';
-import Insumo from '../../models/insumoModelo';
-import Pedido from '../../models/pedidosModelo';
-import Sucursal from '../../models/sucursalModelo';
-import Ubicacion from 'models/ubicacionModelo';
+import Producto from '../../models/productoModelo.js';
+import Cliente from '../../models/clienteModelo.js';
+import Administrador from '../../models/administradorModelo.js';
+import CategoriaProducto from '../../models/categoriaProductoModelo.js';
+import Insumo from '../../models/insumoModelo.js';
+import Pedido from '../../models/pedidosModelo.js';
+import Sucursal from '../../models/sucursalModelo.js';
+import Ubicacion from 'models/ubicacionModelo.js';
 
 const insertarDatosIniciales = async () => {
     try {

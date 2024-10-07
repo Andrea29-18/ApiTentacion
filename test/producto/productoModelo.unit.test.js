@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import { connectDB, disconnectDB } from '../setup';
-import Producto from '../../models/productoModelo';
-import Insumo from '../../models/insumoModelo';
-import CategoriaProducto from '../../models/categoriaProductoModelo';
+import { connectDB, disconnectDB } from '../setup.js';
+import Producto from '../../models/productoModelo.js';
+import Insumo from '../../models/insumoModelo.js';
+import CategoriaProducto from '../../models/categoriaProductoModelo.js';
 import { beforeEach,beforeAll, afterAll, describe, it, expect, afterEach } from '@jest/globals';
 
 beforeAll(async () => {

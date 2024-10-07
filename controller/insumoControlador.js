@@ -1,7 +1,7 @@
-import Insumo from '../models/insumoModelo';
+import Insumo from '../models/insumoModelo.js';
 
 // Crear un nuevo insumo
-const crearInsumo = async (req, res) => {
+export const crearInsumo = async (req, res) => {
     try {
         const nuevoInsumo = new Insumo(req.body);
         await nuevoInsumo.save();
@@ -13,7 +13,7 @@ const crearInsumo = async (req, res) => {
 };
 
 // Obtener todos los insumos
-const obtenerInsumos = async (req, res) => {
+export const obtenerInsumos = async (req, res) => {
     try {
         const insumos = await Insumo.find();
         res.status(200).json(insumos);
@@ -24,7 +24,7 @@ const obtenerInsumos = async (req, res) => {
 };
 
 // Obtener un insumo por ID
-const obtenerInsumoPorId = async (req, res) => {
+export const obtenerInsumoPorId = async (req, res) => {
     const { id } = req.params;
     try {
         const insumo = await Insumo.findById(id);
@@ -39,7 +39,7 @@ const obtenerInsumoPorId = async (req, res) => {
 };
 
 // Actualizar un insumo por ID
-const actualizarInsumo = async (req, res) => {
+export const actualizarInsumo = async (req, res) => {
     const { id } = req.params;
     try {
         const insumoActualizado = await Insumo.findByIdAndUpdate(id, req.body, { new: true });
@@ -54,7 +54,7 @@ const actualizarInsumo = async (req, res) => {
 };
 
 // Eliminar un insumo por ID
-const eliminarInsumo = async (req, res) => {
+export const eliminarInsumo = async (req, res) => {
     const { id } = req.params;
     try {
         const insumoEliminado = await Insumo.findByIdAndDelete(id);
@@ -69,7 +69,7 @@ const eliminarInsumo = async (req, res) => {
 };
 
 // Calcular el costo de los insumos utilizados
-const calcularCosteo = async (req, res) => {
+export const calcularCosteo = async (req, res) => {
     const { insumosUtilizados } = req.body; // [{ insumoId, cantidadUtilizada }]
 
     try {

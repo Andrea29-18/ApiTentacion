@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "Una API REST en cual se encargue de la comunicación de una Repostería.",
 	"main": "index.js",
+	"type": "module",
 	"scripts": {
 		"test": "jest",
 		"start": "node index.js"

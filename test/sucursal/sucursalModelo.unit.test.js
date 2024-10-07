@@ -1,10 +1,10 @@
 import mongoose from 'mongoose'; // Importa mongoose
-import { connectDB, disconnectDB } from '../setup';
-import Sucursal from '../../models/sucursalModelo';
-import Pedido from '../../models/pedidosModelo';
-import Producto from '../../models/productoModelo';
-import Insumo from '../../models/insumoModelo';
-import CategoriaProducto from'../../models/categoriaProductoModelo';
+import { connectDB, disconnectDB } from '../setup.js';
+import Sucursal from '../../models/sucursalModelo.js';
+import Pedido from '../../models/pedidosModelo.js';
+import Producto from '../../models/productoModelo.js';
+import Insumo from '../../models/insumoModelo.js';
+import CategoriaProducto from'../../models/categoriaProductoModelo.js';
 import { beforeEach,beforeAll, afterAll, describe, it, expect, afterEach } from '@jest/globals';
 
 beforeAll(async () => {

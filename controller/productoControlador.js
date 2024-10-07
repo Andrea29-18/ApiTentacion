@@ -1,9 +1,9 @@
-import Producto from '../models/productoModelo';
-import Insumo from '../models/insumoModelo';
-import CategoriaProducto from '../models/categoriaProductoModelo';
+import Producto from '../models/productoModelo.js';
+import Insumo from '../models/insumoModelo.js';
+import CategoriaProducto from '../models/categoriaProductoModelo.js';
 
 // Crear un nuevo producto
-const crearProducto = async (req, res) => {
+export const crearProducto = async (req, res) => {
     try {
         const { nombreProducto, cantidadStock, precioFinal, fechaVencimiento, insumos, catalogoProducto } = req.body;
 
@@ -40,7 +40,7 @@ const crearProducto = async (req, res) => {
 };
 
 // Obtener todos los productos
-const obtenerProductos = async (req, res) => {
+export const obtenerProductos = async (req, res) => {
     try {
         const productos = await Producto.find().populate('insumos catalogoProducto');
         res.status(200).json(productos);
@@ -51,7 +51,7 @@ const obtenerProductos = async (req, res) => {
 };
 
 // Obtener un producto por ID
-const obtenerProductoPorId = async (req, res) => {
+export const obtenerProductoPorId = async (req, res) => {
     try {
         const { id } = req.params;
         const producto = await Producto.findById(id).populate('insumos catalogoProducto');
@@ -66,7 +66,7 @@ const obtenerProductoPorId = async (req, res) => {
 };
 
 // Actualizar un producto por ID
-const actualizarProducto = async (req, res) => {
+export const actualizarProducto = async (req, res) => {
     try {
         const { id } = req.params;
         const productoActualizado = await Producto.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
@@ -81,7 +81,7 @@ const actualizarProducto = async (req, res) => {
 };
 
 // Eliminar un producto por ID
-const eliminarProducto = async (req, res) => {
+export const eliminarProducto = async (req, res) => {
     try {
         const { id } = req.params;
         const productoEliminado = await Producto.findByIdAndDelete(id);

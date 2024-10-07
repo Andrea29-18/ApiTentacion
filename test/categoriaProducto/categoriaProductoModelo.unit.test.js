@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { connectDB, disconnectDB } from '../setup';
-import CategoriaProducto from '../../models/categoriaProductoModelo';
+import { connectDB, disconnectDB } from '../setup.js';
+import CategoriaProducto from '../../models/categoriaProductoModelo.js';
 import { beforeAll, afterAll, describe, it, expect, afterEach } from '@jest/globals';
 
 beforeAll(async () => {

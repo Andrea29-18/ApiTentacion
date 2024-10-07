@@ -1,8 +1,8 @@
-import Pedido  from '../models/pedidosModelo';
-import Producto  from '../models/productoModelo';
+import Pedido  from '../models/pedidosModelo.js';
+import Producto  from '../models/productoModelo.js';
 
 // Crear un nuevo pedido
-const crearPedido = async (req, res) => {
+export const crearPedido = async (req, res) => {
     try {
         const { productos } = req.body;
 
@@ -36,7 +36,7 @@ const crearPedido = async (req, res) => {
 };
 
 // Obtener todos los pedidos
-const obtenerPedidos = async (req, res) => {
+export const obtenerPedidos = async (req, res) => {
     try {
         const pedidos = await Pedido.find().populate('productos');
         res.status(200).json(pedidos);
@@ -47,7 +47,7 @@ const obtenerPedidos = async (req, res) => {
 };
 
 // Obtener un pedido por ID
-const obtenerPedidoPorId = async (req, res) => {
+export const obtenerPedidoPorId = async (req, res) => {
     const { id } = req.params;
     try {
         const pedido = await Pedido.findById(id).populate('productos');
@@ -62,7 +62,7 @@ const obtenerPedidoPorId = async (req, res) => {
 };
 
 // Actualizar un pedido por ID
-const actualizarPedido = async (req, res) => {
+export const actualizarPedido = async (req, res) => {
     const { id } = req.params;
     const { productos } = req.body; // Solo permitimos la actualización de 'productos'
 
@@ -103,7 +103,7 @@ const actualizarPedido = async (req, res) => {
 };
 
 // Eliminar un pedido por ID
-const eliminarPedido = async (req, res) => {
+export const eliminarPedido = async (req, res) => {
     const { id } = req.params;
     try {
         const pedidoEliminado = await Pedido.findByIdAndDelete(id).populate('productos');
