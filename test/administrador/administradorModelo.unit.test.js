@@ -1,5 +1,6 @@
-const { connectDB, disconnectDB } = require('../setup');
-const Administrador = require('../../models/administradorModelo');
+import { connectDB, disconnectDB } from '../setup';
+import Administrador from '../../models/administradorModelo';
+import { beforeAll, afterAll, describe, it, expect, afterEach } from '@jest/globals';
 
 beforeAll(async () => {
     await connectDB();

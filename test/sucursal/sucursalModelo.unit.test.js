@@ -1,10 +1,11 @@
-const mongoose = require('mongoose'); // Importa mongoose
-const { connectDB, disconnectDB } = require('../setup');
-const Sucursal = require('../../models/sucursalModelo');
-const Pedido = require('../../models/pedidosModelo');
-const Producto = require('../../models/productoModelo');
-const Insumo = require('../../models/insumoModelo');
-const CategoriaProducto = require('../../models/categoriaProductoModelo');
+import mongoose from 'mongoose'; // Importa mongoose
+import { connectDB, disconnectDB } from '../setup';
+import Sucursal from '../../models/sucursalModelo';
+import Pedido from '../../models/pedidosModelo';
+import Producto from '../../models/productoModelo';
+import Insumo from '../../models/insumoModelo';
+import CategoriaProducto from'../../models/categoriaProductoModelo';
+import { beforeEach,beforeAll, afterAll, describe, it, expect, afterEach } from '@jest/globals';
 
 beforeAll(async () => {
     await connectDB();

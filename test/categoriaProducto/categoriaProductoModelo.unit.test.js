@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
-const { connectDB, disconnectDB } = require('../setup');
-const CategoriaProducto = require('../../models/categoriaProductoModelo');
+import mongoose from 'mongoose';
+import { connectDB, disconnectDB } from '../setup';
+import CategoriaProducto from '../../models/categoriaProductoModelo';
+import { beforeAll, afterAll, describe, it, expect, afterEach } from '@jest/globals';
 
 beforeAll(async () => {
     await connectDB();
