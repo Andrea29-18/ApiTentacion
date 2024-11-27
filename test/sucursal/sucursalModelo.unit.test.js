@@ -2,9 +2,7 @@ const mongoose = require('mongoose'); // Importa mongoose
 const { connectDB, disconnectDB } = require('../setup');
 const Sucursal = require('../../models/sucursalModelo');
 const Pedido = require('../../models/pedidosModelo');
-const Producto = require('../../models/productoModelo');
-const Insumo = require('../../models/insumoModelo');
-const CategoriaProducto = require('../../models/categoriaProductoModelo');
+const Ubicacion = require('../../models/ubicacionModelo');
 
 beforeAll(async () => {
     await connectDB();
@@ -15,36 +13,26 @@ afterAll(async () => {
 });
 
 describe('Sucursal Model Test', () => {
-    let pedido1, pedido2;
+    let ubicacion, pedido1, pedido2;
 
     beforeEach(async () => {
-        // Crear insumos y categorías para productos
-        const insumo = new Insumo({ nombre: 'Tornillos', cantidadNeta: 1000, precioNeto: 0.05 });
-        await insumo.save();
-
-        const categoria = new CategoriaProducto({ nombreCategoria: 'Construcción', descripcionCategoria: 'Materiales de construcción.' });
-        await categoria.save();
-
-        // Crear productos
-        const producto = new Producto({
-            nombreProducto: 'Caja de Herramientas',
-            cantidadStock: 50,
-            precioFinal: 29.99,
-            fechaVencimiento: new Date('2025-12-31'),
-            insumos: [insumo._id],
-            catalogoProducto: categoria._id
+        // Crear una ubicación
+        ubicacion = new Ubicacion({
+            descripcion: 'Sucursal principal',
+            longitud: -99.1332,
+            latitud: 19.4326
         });
-        await producto.save();
+        await ubicacion.save();
 
         // Crear pedidos
         pedido1 = new Pedido({
-            productos: [producto._id],
-            precioTotal: producto.precioFinal
+            productos: ['producto_id'], // Reemplaza 'producto_id' con un ID válido de producto
+            precioTotal: 100
         });
 
         pedido2 = new Pedido({
-            productos: [producto._id],
-            precioTotal: producto.precioFinal
+            productos: ['producto_id'],
+            precioTotal: 200
         });
 
         await pedido1.save();
@@ -54,27 +42,28 @@ describe('Sucursal Model Test', () => {
     afterEach(async () => {
         await Sucursal.deleteMany({});
         await Pedido.deleteMany({});
-        await Producto.deleteMany({});
-        await Insumo.deleteMany({});
-        await CategoriaProducto.deleteMany({});
+        await Ubicacion.deleteMany({});
     });
 
     it('Debería crear una sucursal correctamente', async () => {
         const sucursal = new Sucursal({
             pedidos: [pedido1._id, pedido2._id],
-            ubicacion: 'Av. Siempre Viva 742, Springfield'
+            ubicacion: ubicacion._id,
+            nombre: 'Sucursal Centro'
         });
 
         const sucursalGuardada = await sucursal.save();
 
         expect(sucursalGuardada._id).toBeDefined();
-        expect(sucursalGuardada.pedidos.length).toBe(2);
-        expect(sucursalGuardada.ubicacion).toBe('Av. Siempre Viva 742, Springfield');
+        expect(sucursalGuardada.pedidos.length).toBe(2); // Verifica que se asignaron 2 pedidos
+        expect(sucursalGuardada.ubicacion).toBe(ubicacion._id.toString()); // Asegura que la ubicación esté guardada correctamente
+        expect(sucursalGuardada.nombre).toBe('Sucursal Centro');
     });
 
-    it('Debería fallar al crear una sucursal sin ubicacion', async () => {
+    it('Debería fallar al crear una sucursal sin ubicación', async () => {
         const sucursalInvalida = new Sucursal({
-            pedidos: [pedido1._id]
+            pedidos: [pedido1._id],
+            nombre: 'Sucursal Sin Ubicación'
         });
 
         await expect(sucursalInvalida.save()).rejects.toThrow(mongoose.Error.ValidationError);
@@ -82,13 +71,65 @@ describe('Sucursal Model Test', () => {
 
     it('Debería crear una sucursal sin pedidos', async () => {
         const sucursal = new Sucursal({
-            ubicacion: 'Calle Falsa 123, Springfield'
+            ubicacion: ubicacion._id,
+            nombre: 'Sucursal Sin Pedidos'
         });
 
         const sucursalGuardada = await sucursal.save();
 
         expect(sucursalGuardada._id).toBeDefined();
-        expect(sucursalGuardada.pedidos.length).toBe(0);
-        expect(sucursalGuardada.ubicacion).toBe('Calle Falsa 123, Springfield');
+        expect(sucursalGuardada.pedidos.length).toBe(0); // Asegúrate de que no haya pedidos
+        expect(sucursalGuardada.ubicacion).toBe(ubicacion._id.toString()); // Verifica que la ubicación esté correctamente asignada
     });
+
+    it('Debería crear una sucursal sin nombre (por defecto)', async () => {
+        const sucursal = new Sucursal({
+            pedidos: [pedido1._id],
+            ubicacion: ubicacion._id
+        });
+
+        const sucursalGuardada = await sucursal.save();
+
+        expect(sucursalGuardada._id).toBeDefined();
+        expect(sucursalGuardada.nombre).toBeUndefined(); // Debería no tener nombre si no se proporciona
+    });
+
+    it('Debería crear una sucursal con nombre', async () => {
+        const sucursal = new Sucursal({
+            pedidos: [pedido1._id, pedido2._id],
+            ubicacion: ubicacion._id,
+            nombre: 'Sucursal Norte'
+        });
+
+        const sucursalGuardada = await sucursal.save();
+
+        expect(sucursalGuardada.nombre).toBe('Sucursal Norte'); // Verifica que se asignó el nombre correctamente
+    });
+
+    it('Debería permitir un solo pedido', async () => {
+        const sucursal = new Sucursal({
+            pedidos: [pedido1._id],
+            ubicacion: ubicacion._id,
+            nombre: 'Sucursal Este'
+        });
+
+        const sucursalGuardada = await sucursal.save();
+
+        expect(sucursalGuardada.pedidos.length).toBe(1); // Asegura que solo hay 1 pedido
+    });
+
+    it('Debería devolver los pedidos al consultar la sucursal', async () => {
+        const sucursal = new Sucursal({
+            pedidos: [pedido1._id, pedido2._id],
+            ubicacion: ubicacion._id,
+            nombre: 'Sucursal Sur'
+        });
+
+        const sucursalGuardada = await sucursal.save();
+        const sucursalConsultada = await Sucursal.findById(sucursalGuardada._id).populate('pedidos');
+
+        expect(sucursalConsultada.pedidos.length).toBe(2); // Verifica que los pedidos estén correctamente asociados
+        expect(sucursalConsultada.pedidos[0]._id.toString()).toBe(pedido1._id.toString()); // Verifica que el pedido1 está en la sucursal
+    });
+
 });
