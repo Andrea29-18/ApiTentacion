@@ -2,60 +2,51 @@ require('dotenv').config();
 const express = require('express');
 const conectarBaseDatos = require('./config/database/conexion');
 const insertarDatosIniciales = require('./config/database/integracion');
-const errorMiddleware = require('./middlewares/errorMiddleware');
 const swaggerDocs = require('./docs/swagger');
-const cors = require('cors');
-
 const app = express();
-const puerto = process.env.PORT || 3003;
+const cors = require("cors")
+const puerto = process.env.PORT || 3000;
 
-const corsOptions = {
-    origin: '*',
-    methods: ['OPTIONS', 'GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-};
-
+// Conectar a la base de datos
 conectarBaseDatos()
     .catch(err => {
         console.error('No se pudo conectar a la base de datos. El servidor no se iniciará.');
         process.exit(1);
     });
 
-// La primera vez que ejecutes la API con exito, comentá la siguiente línea para evitar que se inserten los datos iniciales cada vez que se inicie el servidor
+// Configurar CORS para permitir solicitudes de cualquier origen
+app.use(cors({
+    origin: '*',
+    methods: "GET,PUT,POST,DELETE",
+}));
 
-//insertarDatosIniciales();
+// La primera vez que ejecutes la API con éxito, comenta la siguiente línea para evitar que se inserten los datos iniciales cada vez que se inicie el servidor
+// insertarDatosIniciales();
 
+// Configurar el middleware para manejar el cuerpo de las solicitudes
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// Configuración de Swagger
+// Configuración de Swagger (documentación de la API)
 swaggerDocs(app);
 
-// Importar rutas
-const loginRutas = require('./routes/loginRutas');
-const ubicacionRutas = require('./routes/ubicacionRutas');
-const productoRutas = require('./routes/productoRutas');
-const categoriaProductoRutas = require('./routes/categoriaProductoRutas');
-const pedidoRutas = require('./routes/pedidoRutas');
-const insumosRutas = require('./routes/insumosRutas');
-const clienteRutas = require('./routes/clienteRutas');
-const administradorRutas = require('./routes/administradorRutas')
-const sucursalRutas = require('./routes/sucursalRutas');
-
 // Usar las rutas
-app.use('/login', loginRutas); // Ruta para login
-app.use('/ubicaciones', ubicacionRutas);
-app.use('/productos', productoRutas);
-app.use('/categoriasProducto', categoriaProductoRutas);
-app.use('/pedidos', pedidoRutas);
-app.use('/insumos', insumosRutas);
-app.use('/clientes', clienteRutas);
-app.use('/administradores', administradorRutas);
-app.use('/sucursales', sucursalRutas);
+app.use('/login', require('./routes/loginRutas')); // Ruta para login
+app.use('/ubicaciones', require('./routes/ubicacionRutas'));
+app.use('/productos', require('./routes/productoRutas'));
+app.use('/categoriasProducto', require('./routes/categoriaProductoRutas'));
+app.use('/pedidos', require('./routes/pedidoRutas'));
+app.use('/insumos', require('./routes/insumosRutas'));
+app.use('/clientes', require('./routes/clienteRutas'));
+app.use('/administradores', require('./routes/administradorRutas'));
+app.use('/sucursales', require('./routes/sucursalRutas'));
 
-// Middleware de error
-app.use(errorMiddleware);
+app.get("*", (req, res) => { res.status(404).send("Recurso no encontrado") })
 
+// Middleware de manejo de errores
+app.use(require('./middlewares/errorMiddleware'));
+
+// Iniciar el servidor
 app.listen(puerto, () => {
     console.log(`Servidor corriendo en el puerto ${puerto}`);
     console.log(`Documentación de la API disponible en: http://localhost:${puerto}/api-docs`); // Ruta de la documentación
