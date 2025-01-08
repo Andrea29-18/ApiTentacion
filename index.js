@@ -15,6 +15,8 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
+app.use(cors(corsOptions));
+
 conectarBaseDatos()
     .catch(err => {
         console.error('No se pudo conectar a la base de datos. El servidor no se iniciará.');
