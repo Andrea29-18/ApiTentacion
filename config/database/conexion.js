@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
-const conectorBD = async () => {
+//Conexión a la base de datos en la nube MongoAtlass
+const conectorBDNube = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
-        console.log('Conexión a la BD exitosa');
+        const conn = await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log(`MongoDB conectado: ${conn.connection.host}`);
     } catch (error) {
-        console.error(`Error al conectar a la base de datos: ${error.message}`);
-        throw error;  // Lanza el error para que pueda ser manejado por el middleware
+        console.error(`Error al conectar con MongoDB: ${error.message}`);
     }
 };
 
-module.exports = conectorBD;
+module.exports = { conectorBDNube };
