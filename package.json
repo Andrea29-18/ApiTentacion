@@ -19,7 +19,7 @@
 		"glob": "^11.0.0",
 		"jsonwebtoken": "^9.0.2",
 		"mongodb": "^6.12.0",
-		"mongoose": "^8.6.3",
+		"mongoose": "^8.9.5",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.1"
 	},
